@@ -140,10 +140,10 @@
             </a>
           </li>
           <li class="mb-1">
-            <a href='./calendar' class="btn btn-dark w-100" style="color: white;">
+            <a href='./calendar' class="btn btn-dark w-100" style="color: white;" id='calendarHref'>
               <div class="row">
                 <div class="col-2">
-                  <span class='material-symbols-outlined'>event</span>
+                  <span class='material-symbols-outlined'>calendar_month</span>
                 </div>
                 <div class="col-10">
                   <h5 class='text-start'>Calendar</h5>
@@ -151,6 +151,11 @@
               </div>
             </a>
           </li>
+          <script>
+            const month = new Date().getMonth() + 1
+            const year = new Date().getFullYear()
+            document.getElementById('calendarHref').href = './calendar?month=' + month + '&year=' + year
+          </script>
           <li class="mb-1">
             <button class="btn btn-toggle btn-dark w-100" data-bs-toggle="collapse" data-bs-target="#dashboard-collapse" style="color: white;">
               <div class="row">
@@ -334,7 +339,9 @@
                           <div class='form-text align-middle' id='estimatedTime'>Estimated time: [Now]</div>
                         </div>
                         <div class="col-4">
-                          <a href='#' style='color: #0D6EFD;' class='form-text align-middle' id='' onclick='applyDateValues(); calcEstimatedTime()'>Reset</a>
+                          <a href='#' style='color: white; text-decoration: none;' class='badge bg-primary form-text align-middle' id='' onclick='applyDateValues(); calcEstimatedTime()'>
+                            <span>Reset</span>
+                          </a>
                         </div>
                       </div>
 
@@ -516,9 +523,6 @@
       </div>
     </div>
   </div>
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"
-          integrity="sha384-geWF76RCwLtnZ8qwWowPQNguL3RmwHVBC9FhGdlKrxdiJJigb/j/68SIy3Te4Bkz"
-  crossorigin="anonymous"></script>
 </body>
 
 </html>

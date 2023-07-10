@@ -43,18 +43,18 @@
 <body>
   <!-- Navbar -->
   <jsp:include page="navbar.jsp"/>
-  <c:url value="/" var="home"></c:url>
   
   <div class="row">
+
     <!-- sidebar -->
     <div class="col-2 min-vh-100" style="background-color: #212529;">
       <div class="p-3">
         <ul class="list-unstyled">
           <li class="mb-1">
-            <a href='${home}' class="btn btn-dark w-100 ${search ? '' : 'active'}" style="color: white;">
+            <a href='./' class="btn btn-dark w-100 ${search ? '' : 'active'}" style="color: white;">
               <div class="row">
                 <div class="col-2">
-                  <span class='${search ? "material-symbols-outlined" : "material-icons"} align-middle'>home</span>
+                  <span class='${search ? "material-symbols-outlined" : "material-icons"}'>home</span>
                 </div>
                 <div class="col-10">
                   <h5 class='text-start'>Home</h5>
@@ -63,10 +63,10 @@
             </a>
           </li>
           <li class="mb-1">
-            <a href='./calendar' class="btn btn-dark w-100" style="color: white;">
+            <a href='./calendar' class="btn btn-dark w-100" style="color: white;" id='calendarHref'>
               <div class="row">
                 <div class="col-2">
-                  <span class='material-symbols-outlined align-middle'>event</span>
+                  <span class='material-symbols-outlined'>calendar_month</span>
                 </div>
                 <div class="col-10">
                   <h5 class='text-start'>Calendar</h5>
@@ -74,11 +74,16 @@
               </div>
             </a>
           </li>
+          <script>
+            const month = new Date().getMonth() + 1
+            const year = new Date().getFullYear()
+            document.getElementById('calendarHref').href = './calendar?month=' + month + '&year=' + year
+          </script>
           <li class="mb-1">
             <button class="btn btn-toggle btn-dark w-100" data-bs-toggle="collapse" data-bs-target="#dashboard-collapse" style="color: white;">
               <div class="row">
                 <div class="col-2">
-                  <span class='material-symbols-outlined align-middle'>bookmark</span>
+                  <span class='material-symbols-outlined'>bookmark</span>
                 </div>
                 <div class="col-10">
                   <h5 class='text-start'>My courses</h5>

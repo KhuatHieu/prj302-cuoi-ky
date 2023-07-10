@@ -53,6 +53,14 @@ public class Test {
     return new SimpleDateFormat("dd/MM/yyyy HH:mm").format(date);
   }
 
+  public Timestamp getDateTimestamp() {
+    return date;
+  }
+  
+  public int getDayOfMonth() {
+    return date.toLocalDateTime().getDayOfMonth();
+  }
+  
   public String getStatus() {
     return status;
   }

@@ -19,7 +19,7 @@ public class LoginController extends HttpServlet {
   public static void checkLogin(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
     HttpSession session = req.getSession(false);
     if (session == null || session.getAttribute("teacher") == null) {
-      req.setAttribute("log", "Please re-login!");
+      req.setAttribute("log", "Session expired! Please re-login");
       req.getRequestDispatcher("login.jsp").forward(req, resp);
     }
   }

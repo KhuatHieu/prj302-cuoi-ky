@@ -65,7 +65,7 @@ public class TestDAO extends DBContext {
   }
 
   public ArrayList<Test> getTestListByCourseId(int id) {
-    ArrayList<Test> courseList = new ArrayList<>();
+    ArrayList<Test> testList = new ArrayList<>();
 
     try {
       String strQuery = "SELECT * FROM dbo.Test WHERE CourseID = ?";
@@ -74,7 +74,7 @@ public class TestDAO extends DBContext {
 
       ResultSet rs = stm.executeQuery();
       while (rs.next()) {
-        courseList.add(new Test(
+        testList.add(new Test(
                 rs.getInt(1),
                 rs.getString(2),
                 rs.getInt(3),
@@ -86,7 +86,36 @@ public class TestDAO extends DBContext {
     } catch (SQLException e) {
       e.printStackTrace();
     }
-    return courseList;
+    return testList;
+  }
+
+  public ArrayList<Test> getTestListByTeacherId(int teacherId) {
+    ArrayList<Test> testList = new ArrayList<>();
+
+    try {
+      String strQuery = "SELECT * \n"
+              + "FROM dbo.Test t\n"
+              + "INNER JOIN dbo.Course c\n"
+              + "ON c.CourseID = t.CourseId\n"
+              + "WHERE c.TeacherID = ?";
+      PreparedStatement stm = connection.prepareStatement(strQuery);
+      stm.setInt(1, teacherId);
+
+      ResultSet rs = stm.executeQuery();
+      while (rs.next()) {
+        testList.add(new Test(
+                rs.getInt(1),
+                rs.getString(2),
+                rs.getInt(3),
+                rs.getInt(4),
+                rs.getTimestamp(5),
+                rs.getString(6)
+        ));
+      }
+    } catch (SQLException e) {
+      e.printStackTrace();
+    }
+    return testList;
   }
 
   public void deleteCourse(int testId) {
