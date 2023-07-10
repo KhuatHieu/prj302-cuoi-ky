@@ -9,18 +9,20 @@ import jakarta.servlet.http.HttpServletResponse;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.OutputStream;
-import utilities.Encrypt;
 
 public class DownloadController extends HttpServlet {
 
+  public String encrypt(String key) {
+    return key.substring(key.lastIndexOf("\\") + 1);
+  }
+
+  public String decrypt(String encKey) {
+    return utilities.File.databasePath + "\\" + encKey;
+  }
+
   @Override
   protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-    String downloadKey = "";
-
-    try {
-      downloadKey = Encrypt.decrypt(request.getParameter("downloadKey"));
-    } catch (Exception e) {
-    }
+    String downloadKey = this.decrypt(request.getParameter("downloadKey"));
 
     File file = new File(downloadKey);
     FileInputStream inputStream = new FileInputStream(file);

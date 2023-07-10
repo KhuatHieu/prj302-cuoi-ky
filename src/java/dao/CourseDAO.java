@@ -95,14 +95,14 @@ public class CourseDAO extends DBContext {
     }
   }
 
-  public void changeCourseName(String courseId, String courseName) {
+  public void updateCourseName(String courseId, String newCourseName) {
     try {
       String strQuery = "UPDATE dbo.Course\n"
               + "SET CourseName = ?\n"
               + "WHERE CourseID = ?";
       PreparedStatement stm = connection.prepareStatement(strQuery);
-      stm.setString(1, courseId);
-      stm.setString(2, courseName);
+      stm.setString(2, courseId);
+      stm.setString(1, newCourseName);
 
       stm.execute();
     } catch (SQLException e) {
@@ -110,14 +110,14 @@ public class CourseDAO extends DBContext {
     }
   }
 
-  public void changeCourseDescription(String courseId, String courseDesc) {
+  public void updateCourseDescription(String courseId, String newCourseDesc) {
     try {
       String strQuery = "UPDATE dbo.Course\n"
               + "SET CourseDescription = ?\n"
               + "WHERE CourseID = ?";
       PreparedStatement stm = connection.prepareStatement(strQuery);
-      stm.setString(1, courseId);
-      stm.setString(2, courseDesc);
+      stm.setString(2, courseId);
+      stm.setString(1, newCourseDesc);
 
       stm.execute();
     } catch (SQLException e) {

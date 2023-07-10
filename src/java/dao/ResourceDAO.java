@@ -12,7 +12,8 @@ import java.io.File;
 
 public class ResourceDAO extends DBContext {
 
-  public void createResourceRecord(String courseId, String name, String path) {
+//  upload a Resource for a Course
+  public void uploadCourseResource(String courseId, String name, String path) {
     try {
       String iiResource = "INSERT INTO dbo.Resource\n"
               + "VALUES (?, ?)\n";
@@ -40,6 +41,35 @@ public class ResourceDAO extends DBContext {
     }
   }
 
+//  upload a Resource for a Test
+  public void uploadTestResource(int testId, String name, String path) {
+    try {
+      String iiResource = "INSERT INTO dbo.Resource\n"
+              + "VALUES (?, ?)\n";
+      PreparedStatement stm1 = connection.prepareStatement(iiResource,
+              Statement.RETURN_GENERATED_KEYS);
+      stm1.setString(1, name);
+      stm1.setString(2, path);
+
+      stm1.executeUpdate();
+      ResultSet generatedKeys = stm1.getGeneratedKeys();
+      String resourceId = "";
+      if (generatedKeys.next()) {
+        resourceId = Integer.toString(generatedKeys.getInt(1));
+      }
+
+      String iiCourseResource = "INSERT INTO dbo.TestResource\n"
+              + "VALUES (?, ?)";
+      PreparedStatement stm2 = connection.prepareStatement(iiCourseResource);
+      stm2.setInt(1, testId);
+      stm2.setString(2, resourceId);
+
+      stm2.execute();
+    } catch (SQLException e) {
+      e.printStackTrace();
+    }
+  }
+  
   public ArrayList<Resource> getResourceList(String courseId) {
     ArrayList<Resource> resourceList = new ArrayList<>();
 
@@ -76,7 +106,8 @@ public class ResourceDAO extends DBContext {
       stm.setString(1, resourceId);
 
 //      Delete the filePath
-//      Should make sql transaction, delete record first then physical file
+//      Should use sql transaction
+//      delete record first then physical file
       ResultSet rs = stm.executeQuery();
       if (rs.next()) {
         new File(rs.getString(3)).delete();

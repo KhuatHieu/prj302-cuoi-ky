@@ -17,7 +17,7 @@ import jakarta.servlet.http.HttpSession;
 @WebServlet(name = "course", urlPatterns = {"/course"})
 @MultipartConfig(
         fileSizeThreshold = 1024 * 1024 * 1, // 1MB
-        maxFileSize = 1024 * 1024 * 25, // 25MB
+        maxFileSize = 1024 * 1024 * 50, // 50MB
         maxRequestSize = 1024 * 1024 * 100 // 100MB
 )
 
@@ -27,22 +27,32 @@ public class CourseController extends HttpServlet {
 
   private final CourseDAO courseDAO = new CourseDAO();
   private final ResourceDAO resourceDAO = new ResourceDAO();
+  private final TestDAO testDAO = new TestDAO();
 
   private HttpSession session;
 
   private void showDetails(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
     req.setAttribute("resourceList",
             resourceDAO.getResourceList(req.getParameter("courseId")));
+
     req.setAttribute("courseList",
             courseDAO.getCourseListByTeacherId(((Teacher) req.getSession().getAttribute("teacher")).getTeacherId()));
+
     req.setAttribute("courseId", req.getParameter("courseId"));
     req.setAttribute("course", courseDAO.getCourseByCourseId(
             req.getParameter("courseId")));
+
+    req.setAttribute("classList", new ClassDAO().getClassList());
+    req.setAttribute("testList",
+            new TestDAO().getTestListByCourseId(Integer.parseInt(req.getParameter("courseId"))));
+    if (req.getAttribute("testId") != null) {
+      req.setAttribute("test", testDAO.getTestByTestId(Integer.parseInt(req.getParameter("testId"))));
+    }
     req.getRequestDispatcher("course.jsp").forward(req, resp);
   }
 
   private void uploadResource(HttpServletRequest req, String courseId) throws ServletException, IOException {
-    new ResourceController().uploadResource(req, courseId);
+    new ResourceController().uploadCourseResource(req, courseId);
   }
 
   private void deleteResource(String[] resourceIdList) {
@@ -67,12 +77,9 @@ public class CourseController extends HttpServlet {
     resp.sendRedirect("./");
   }
 
-  private void updateCourse(HttpServletRequest req, HttpServletResponse resp) {
+  private void deleteCourse(HttpServletRequest req, HttpServletResponse resp) throws IOException {
 
-  }
-
-  private void deleteCourse(HttpServletRequest req, HttpServletResponse resp) {
-
+    resp.sendRedirect("./");
   }
 
   @Override
@@ -86,9 +93,6 @@ public class CourseController extends HttpServlet {
       case "add":
         addCourse(req, resp);
         break;
-      case "update":
-        updateCourse(req, resp);
-        break;
       case "delete":
         deleteCourse(req, resp);
         break;
@@ -98,14 +102,24 @@ public class CourseController extends HttpServlet {
   @Override
   protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
     switch (req.getParameter("action")) {
+      case "updateCourseName":
+        courseDAO.updateCourseName(req.getParameter("courseId"),
+                req.getParameter("courseName"));
+        break;
+      case "updateCourseDesc":
+        courseDAO.updateCourseDescription(req.getParameter("courseId"),
+                req.getParameter("courseDesc"));
+        break;
       case "uploadResource":
         uploadResource(req, req.getParameter("courseId"));
-        resp.sendRedirect("./course" + "?" + req.getParameter("queryString"));
         break;
       case "deleteResource":
         deleteResource(req.getParameterValues("selectedResourceIds"));
-        resp.sendRedirect("./course" + "?" + req.getParameter("queryString"));
+        break;
+      case "createTest":
+        new TestController().createTest(req);
         break;
     }
+    resp.sendRedirect("./course?" + req.getParameter("queryString"));
   }
 }

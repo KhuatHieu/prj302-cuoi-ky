@@ -11,19 +11,6 @@ public class File {
 //  );
   public static String databasePath = "D:\\prj302-cuoi-ky\\database\\";
 
-  public static String getUniqueFileName(String decFileName) {
-    String encId = "";
-    for (int i = 0; i < 8; i++) {
-      encId = encId + UUID.randomUUID().toString()
-              .replaceAll("-", "")
-              .charAt(new Random().nextInt(8));
-    }
-
-    return File.getFileName(decFileName)
-            + "-" + encId
-            + "." + File.getFileExtension(decFileName);
-  }
-
   public static String getUniqueFileName(Part part) {
     String characters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
     String encId = "";
@@ -35,11 +22,6 @@ public class File {
     return File.getFileName(part.getSubmittedFileName())
             + "-" + encId
             + "." + File.getFileExtension(part.getSubmittedFileName());
-  }
-
-  public static String getDecryptedFileName(String encFileName) {
-    return File.getFileName(encFileName)
-            + "." + File.getFileExtension(encFileName);
   }
 
   public static String getFileName(String fileName) {

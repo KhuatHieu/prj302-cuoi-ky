@@ -11,10 +11,11 @@
       Teacher teacher = (Teacher) request.getSession().getAttribute("teacher"); 
     %>
   </head>
+  <c:url value="/" var="home"></c:url>
   <body style='overflow-x: hidden;'>
     <div class="row border-bottom sticky-top" style='height: 4rem; background-color: white;'>
       <div class="col-2">
-        <a href="./">
+        <a href="${home}">
           <img class='m-3' src="https://fpt.edu.vn/Content/images/assets/Logo-FU-03.png" height='35'>
         </a>
       </div>

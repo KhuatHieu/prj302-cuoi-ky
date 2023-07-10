@@ -1,6 +1,6 @@
 package model;
 
-import utilities.Encrypt;
+import controller.DownloadController;
 import utilities.File;
 
 public class Resource {
@@ -29,7 +29,7 @@ public class Resource {
   }
 
   public String getDownloadKey() throws Exception {
-    return Encrypt.encrypt(path);
+    return new DownloadController().encrypt(path);
   }
 
   public String getExtension() {

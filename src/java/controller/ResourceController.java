@@ -18,27 +18,44 @@ public class ResourceController extends HttpServlet {
 
   private final ResourceDAO resourceDAO = new ResourceDAO();
 
-  public void uploadResource(HttpServletRequest req, String courseId) throws ServletException, IOException {
-    ArrayList<Part> fileParts = (ArrayList<Part>) req.getParts();
-    for (Part filePart : fileParts) {
+  public void uploadCourseResource(HttpServletRequest req, String courseId) throws ServletException, IOException {
+    for (Part filePart : (ArrayList<Part>) req.getParts()) {
       if (filePart.getName().equals("file")) {
         String fileName = "";
         do {
           fileName = File.getUniqueFileName(filePart);
         } while (new java.io.File(dbPath + fileName).isFile());
 
-//    Create a record in dbo.Resource and dbo.CourseResource
-        resourceDAO.createResourceRecord(courseId, filePart.getSubmittedFileName(), dbPath + fileName);
+        resourceDAO.uploadCourseResource(courseId, filePart.getSubmittedFileName(), dbPath + fileName);
 
-//    Upload file to server
         filePart.write(dbPath + fileName);
       }
     }
   }
 
-  public void deleteResource(HttpServletRequest req, ArrayList<String> resourceIdList) {
+  public void uploadTestResource(HttpServletRequest req, int testId) throws ServletException, IOException {
+    for (Part filePart : (ArrayList<Part>) req.getParts()) {
+      if (filePart.getName().equals("file")) {
+        String fileName = "";
+        do {
+          fileName = File.getUniqueFileName(filePart);
+        } while (new java.io.File(dbPath + fileName).isFile());
+
+        resourceDAO.uploadTestResource(testId, filePart.getSubmittedFileName(), dbPath + fileName);
+
+        filePart.write(dbPath + fileName);
+      }
+    }
+  }
+
+  public void deleteTestResource(HttpServletRequest req, ArrayList<Integer> testIdList) {
+    for (int testId : testIdList) {
+      System.out.println(testId);
+    }
+  }
+
+  public void deleteCourseResource(HttpServletRequest req, ArrayList<String> resourceIdList) {
     for (String resId : resourceIdList) {
-//      resourceDAO.deleteResource(resId);
       System.out.println(resId);
     }
   }

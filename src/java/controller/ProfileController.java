@@ -13,6 +13,8 @@ public class ProfileController extends HttpServlet {
 
   private final TeacherDAO teacherDAO = new TeacherDAO();
   
+//  'Profile' means fullName and shortName
+//  just it
   private void changeProfile(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
     String teacherId = req.getParameter("teacherId");
     String newFullName = req.getParameter("fullName");
@@ -34,7 +36,7 @@ public class ProfileController extends HttpServlet {
     if (req.getAttribute("action") != null) {
       this.doPost(req, resp);
     }
-    LoginController.reload(req, resp);
+    LoginController.reloadSession(req, resp);
     req.getRequestDispatcher("profile.jsp").forward(req, resp);
   }
 

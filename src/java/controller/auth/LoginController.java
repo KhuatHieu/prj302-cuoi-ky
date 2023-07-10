@@ -25,7 +25,7 @@ public class LoginController extends HttpServlet {
     }
   }
 
-  public static void reload(HttpServletRequest req, HttpServletResponse resp) {
+  public static void reloadSession(HttpServletRequest req, HttpServletResponse resp) {
     Teacher t = (Teacher) req.getSession().getAttribute("teacher");
     String username = t.getUsername();
     String password = new TeacherDAO().getTeacherPassword(username);
@@ -43,8 +43,6 @@ public class LoginController extends HttpServlet {
   protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
     String username = req.getParameter("username");
     String password = req.getParameter("password");
-
-    System.out.println(username + " " + password);
     
     Teacher teacher = teacherDao.getTeacher(username, password);
 

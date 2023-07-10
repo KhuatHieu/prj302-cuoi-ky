@@ -1,6 +1,8 @@
 package model;
 
+import dao.ClassDAO;
 import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
 
 public class Test {
 
@@ -9,14 +11,18 @@ public class Test {
 
   int testId;
   String testName;
+  int courseId, classId;
   Timestamp date;
   String status = IN_PROGRESS;
 
   public Test() {
   }
 
-  public Test(String testName, Timestamp date) {
+  public Test(int testId, String testName, int courseId, int classId, Timestamp date) {
+    this.testId = testId;
     this.testName = testName;
+    this.courseId = courseId;
+    this.classId = classId;
     this.date = date;
   }
 
@@ -28,8 +34,21 @@ public class Test {
     return testName;
   }
 
-  public Timestamp getDate() {
-    return date;
+  public int getCourseId() {
+    return courseId;
+  }
+
+  public int getClassId() {
+    return classId;
+  }
+
+  public String getClassName() {
+    return new ClassDAO().getClassNameByClassId(classId);
+  }
+  
+  public String getDate() {
+    SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy hh:mm");
+    return sdf.format(date);
   }
 
   public String getStatus() {
