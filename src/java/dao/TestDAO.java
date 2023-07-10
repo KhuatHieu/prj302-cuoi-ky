@@ -12,28 +12,32 @@ import model.Test;
 
 public class TestDAO extends DBContext {
 
-  public void createTest(String testName, int courseId, int classId, Timestamp dueDate) {
+//  return IDENTITY (testId)
+  public int createTest(String testName, int courseId, int classId, Timestamp dueDate) {
     try {
       String strQuery = "INSERT INTO dbo.Test\n"
-              + "VALUES (?, ?, ?, ?)";
+              + "VALUES (?, ?, ?, ?, ?)";
       PreparedStatement stm = connection.prepareStatement(strQuery,
               Statement.RETURN_GENERATED_KEYS);
       stm.setString(1, testName);
       stm.setInt(2, courseId);
       stm.setInt(3, classId);
       stm.setTimestamp(4, dueDate);
+      stm.setString(5, Test.ONGOING);
 
       stm.execute();
 
       int testId = -1;
       ResultSet keys = stm.getGeneratedKeys();
       if (keys.next()) {
-        testId = keys.getInt(1);
+        return keys.getInt(1);
       }
 
     } catch (SQLException e) {
       e.printStackTrace();
     }
+
+    return -1;
   }
 
   public Test getTestByTestId(int testId) {
@@ -49,7 +53,8 @@ public class TestDAO extends DBContext {
                 rs.getString(2),
                 rs.getInt(3),
                 rs.getInt(4),
-                rs.getTimestamp(5)
+                rs.getTimestamp(5),
+                rs.getString(6)
         );
       }
     } catch (SQLException e) {
@@ -74,12 +79,25 @@ public class TestDAO extends DBContext {
                 rs.getString(2),
                 rs.getInt(3),
                 rs.getInt(4),
-                rs.getTimestamp(5)
+                rs.getTimestamp(5),
+                rs.getString(6)
         ));
       }
     } catch (SQLException e) {
       e.printStackTrace();
     }
     return courseList;
+  }
+
+  public void deleteCourse(int testId) {
+    try {
+      String strQuery = "SELECT * FROM dbo.Test WHERE TestId = ?";
+      PreparedStatement stm = connection.prepareStatement(strQuery);
+      stm.setInt(1, testId);
+
+      stm.execute();
+    } catch (SQLException e) {
+      e.printStackTrace();
+    }
   }
 }

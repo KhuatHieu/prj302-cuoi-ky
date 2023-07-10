@@ -13,6 +13,7 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
+import java.util.ArrayList;
 
 @WebServlet(name = "course", urlPatterns = {"/course"})
 @MultipartConfig(
@@ -43,11 +44,25 @@ public class CourseController extends HttpServlet {
             req.getParameter("courseId")));
 
     req.setAttribute("classList", new ClassDAO().getClassList());
-    req.setAttribute("testList",
-            new TestDAO().getTestListByCourseId(Integer.parseInt(req.getParameter("courseId"))));
-    if (req.getAttribute("testId") != null) {
-      req.setAttribute("test", testDAO.getTestByTestId(Integer.parseInt(req.getParameter("testId"))));
+
+    ArrayList<Test> testList = new TestDAO().getTestListByCourseId(Integer.parseInt(req.getParameter("courseId")));
+    testList.sort((t1, t2) -> {
+//      On going -> Not graded -> Graded
+      final String ORDER = "ONG";
+
+      char t1Status = t1.getStatus().charAt(0);
+      char t2Status = t2.getStatus().charAt(0);
+
+      return ORDER.indexOf(t1Status) - ORDER.indexOf(t2Status);
+    });
+
+    req.setAttribute("testList", testList);
+
+    if (req.getParameter("testId") != null) {
+      req.setAttribute("test",
+              testDAO.getTestByTestId(Integer.parseInt(req.getParameter("testId"))));
     }
+
     req.getRequestDispatcher("course.jsp").forward(req, resp);
   }
 

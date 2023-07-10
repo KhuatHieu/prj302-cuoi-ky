@@ -96,6 +96,7 @@ public class ResourceDAO extends DBContext {
     return resourceList;
   }
   
+//  delete in both DB and physical drive
   public void deleteResource(String resourceId) {
     try {
 //      Get filePath from resourceId
@@ -106,8 +107,7 @@ public class ResourceDAO extends DBContext {
       stm.setString(1, resourceId);
 
 //      Delete the filePath
-//      Should use sql transaction
-//      delete record first then physical file
+//      TODO: sql transaction
       ResultSet rs = stm.executeQuery();
       if (rs.next()) {
         new File(rs.getString(3)).delete();

@@ -36,8 +36,8 @@ public class TestController {
 
     Timestamp dueDate = new Timestamp(_c.getTimeInMillis());
 
-    testDAO.createTest(testName, courseId, classId, dueDate);
+    int testId = testDAO.createTest(testName, courseId, classId, dueDate);
 
-    new ResourceController().uploadTestResource(req, classId);
+    new ResourceController().uploadTestResource(req, testId);
   }
 }

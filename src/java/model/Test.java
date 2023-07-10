@@ -6,24 +6,27 @@ import java.text.SimpleDateFormat;
 
 public class Test {
 
-  public static final String IN_PROGRESS = "In progress", NOT_REVIEWED = "Done - Not reviewed",
-          REVIEWED = "Done - Reviewed";
+//  hardcoded in database
+//  PLEASE dont touch
+  public static final String ONGOING = "Ongoing", NOT_GRADED = "Not graded",
+          GRADED = "Graded";
 
   int testId;
   String testName;
   int courseId, classId;
   Timestamp date;
-  String status = IN_PROGRESS;
+  String status = ONGOING;
 
   public Test() {
   }
 
-  public Test(int testId, String testName, int courseId, int classId, Timestamp date) {
+  public Test(int testId, String testName, int courseId, int classId, Timestamp date, String status) {
     this.testId = testId;
     this.testName = testName;
     this.courseId = courseId;
     this.classId = classId;
     this.date = date;
+    this.status = status;
   }
 
   public int getTestId() {
@@ -47,8 +50,7 @@ public class Test {
   }
   
   public String getDate() {
-    SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy hh:mm");
-    return sdf.format(date);
+    return new SimpleDateFormat("dd/MM/yyyy HH:mm").format(date);
   }
 
   public String getStatus() {

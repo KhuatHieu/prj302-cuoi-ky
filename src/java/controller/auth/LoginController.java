@@ -1,6 +1,5 @@
 package controller.auth;
 
-import controller.DashboardController;
 import dao.TeacherDAO;
 import model.Teacher;
 
@@ -20,7 +19,7 @@ public class LoginController extends HttpServlet {
   public static void checkLogin(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
     HttpSession session = req.getSession(false);
     if (session == null || session.getAttribute("teacher") == null) {
-      req.setAttribute("log", "You have been logged out!");
+      req.setAttribute("log", "Please re-login!");
       req.getRequestDispatcher("login.jsp").forward(req, resp);
     }
   }
@@ -49,7 +48,6 @@ public class LoginController extends HttpServlet {
     if (teacher != null) {
       HttpSession session = req.getSession();
       session.setAttribute("teacher", teacher);
-      session.setMaxInactiveInterval(-1);
       resp.sendRedirect(req.getContextPath() + "/");
     } else {
       req.setAttribute("log", "Wrong username or password!");
