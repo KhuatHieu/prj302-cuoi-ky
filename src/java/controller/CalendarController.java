@@ -30,6 +30,8 @@ public class CalendarController extends HttpServlet {
     int month = Integer.valueOf(req.getParameter("month"));
     int year = Integer.valueOf(req.getParameter("year"));
     
+    System.out.println(year);
+    
     Calendar c = Calendar.getInstance();
     c.set(Calendar.MONTH, month - 1);
     c.set(Calendar.YEAR, year);
@@ -41,11 +43,11 @@ public class CalendarController extends HttpServlet {
 //    only get Test of current month
     ArrayList<Test> testList = new ArrayList<>();
     for (Test test : _testList) {
-      if (test.getDateTimestamp().getMonth() + 1 == month) {
+      System.out.println(test.getDateTimestamp().getYear());
+      if (test.getMonth() == month && test.getYear() == year) {
         testList.add(test);
       }
     }
-    System.out.println(testList.size());
     
     req.setAttribute("startDayOfMonth", startDayOfMonth);
     req.setAttribute("endDayOfMonth", endDayOfMonth);

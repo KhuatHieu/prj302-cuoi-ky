@@ -64,13 +64,13 @@ public class TestDAO extends DBContext {
     return null;
   }
 
-  public ArrayList<Test> getTestListByCourseId(int id) {
+  public ArrayList<Test> getTestListByCourseId(int courseId) {
     ArrayList<Test> testList = new ArrayList<>();
 
     try {
       String strQuery = "SELECT * FROM dbo.Test WHERE CourseID = ?";
       PreparedStatement stm = connection.prepareStatement(strQuery);
-      stm.setInt(1, id);
+      stm.setInt(1, courseId);
 
       ResultSet rs = stm.executeQuery();
       while (rs.next()) {
@@ -88,7 +88,7 @@ public class TestDAO extends DBContext {
     }
     return testList;
   }
-
+  
   public ArrayList<Test> getTestListByTeacherId(int teacherId) {
     ArrayList<Test> testList = new ArrayList<>();
 

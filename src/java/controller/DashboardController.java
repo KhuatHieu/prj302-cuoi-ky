@@ -3,6 +3,7 @@ package controller;
 import controller.auth.LoginController;
 import dao.CourseDAO;
 import dao.SubjectDAO;
+import dao.TestDAO;
 import java.io.IOException;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -12,6 +13,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
 import model.Course;
 import model.Teacher;
+import model.Test;
 
 public class DashboardController extends HttpServlet {
 
@@ -26,7 +28,7 @@ public class DashboardController extends HttpServlet {
 
     int teacherId = ((Teacher) req.getSession().getAttribute("teacher")).getTeacherId();
     req.setAttribute("courseList", courseDAO.getCourseListByTeacherId(teacherId));
-    
+
     req.getRequestDispatcher("/dashboard.jsp").forward(req, resp);
   }
 

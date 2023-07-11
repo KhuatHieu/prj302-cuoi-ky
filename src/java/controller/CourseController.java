@@ -59,6 +59,9 @@ public class CourseController extends HttpServlet {
     req.setAttribute("testList", testList);
 
     if (req.getParameter("testId") != null) {
+      int testId = Integer.parseInt(req.getParameter("testId"));
+      req.setAttribute("testId", String.valueOf(testId));
+      req.setAttribute("testName", testDAO.getTestByTestId(testId).getTestName());
       req.setAttribute("test",
               testDAO.getTestByTestId(Integer.parseInt(req.getParameter("testId"))));
     }

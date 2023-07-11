@@ -12,6 +12,10 @@
   <% 
     Teacher teacher = (Teacher) request.getSession().getAttribute("teacher"); 
     String courseId = (String) request.getAttribute("courseId");
+    int testId = -1;
+    if (request.getAttribute("testId") != null) {
+      testId = Integer.parseInt((String) request.getAttribute("courseId"));
+    }
   %>
   <script>
     function applyDateValues() {
@@ -124,7 +128,7 @@
   <div class="row">
 
     <!-- sidebar -->
-    <div class="col-2 min-vh-100" style="background-color: #212529;">
+    <div class="col-2 min-vh-100 position-fixed" style="background-color: #212529;">
       <div class="p-3">
         <ul class="list-unstyled">
           <li class="mb-1">
@@ -171,7 +175,7 @@
             <div class="collapse show" id="dashboard-collapse">
               <ul class="list-unstyled overflow-y-auto" style="color: white; max-height: 60vh;">
                 <c:forEach items="${courseList}" var="c">
-                  <li>
+                  <li class=''>
                     <a href="./course?action=details&courseId=${c.id}" class="btn w-100 btn-dark align-items-center ${c.getId() == courseId ? 'active' : ''}" style="font-size: medium; color: white; text-align: left;">
                       <div class="row align-items-center ms-0">
                         <div class="col-2">
@@ -187,7 +191,7 @@
               </ul>
             </div>
           </li>
-          <li class="mb-1" style='position: absolute; bottom: 0rem;'>
+          <li class="mb-1" style='position: absolute; bottom: 4rem;'>
             <hr class='border w-100'>
             <button class="btn btn-dark w-100" style="color: white;">
               <div class="row">
@@ -204,7 +208,7 @@
       </div>
     </div>
 
-    <div class="col-10 mt-3">
+    <div class="col-10 mt-3" style='margin-left: 16.667%;'>
       <div class="row ms-0">
 
         <!-- Course name header, Tests summary and Test details -->
@@ -212,8 +216,21 @@
 
           <!-- Course name -->
           <h1 class='ms-3 mb-3 mt-2' style='vertical-align: middle;'>
-            ${course.getCourseName()}
+            <c:if test="${empty testId}">
+              ${course.getCourseName()}
+            </c:if>
+            <c:if test="${not empty testId}">
+              <a href="./course?action=details&courseId=${course.getId()}" style='text-decoration: none;'>
+                ${course.getCourseName()}
+              </a>
+            </c:if>
           </h1>
+          
+          <c:if test="${not empty testId}">
+            <h4  class='ms-3 mb-3' style='margin-top: -1rem;'>
+              / ${testName}
+            </h4>
+          </c:if>
 
           <!-- Tests summary -->
           <div class="border rounded ps-3">
@@ -236,20 +253,12 @@
                 </thead>
                 <tbody>
                   <c:forEach items="${testList}" var="t">
-                    <tr onclick='checkCourse(${t.getTestId()})' style='cursor: pointer;'>
+                    <tr onclick='checkCourse(${t.getTestId()})' style='cursor: pointer;' class='${t.getTestId() == testId ? 'table-active' : ''}'>
                       <th scope='row'><span class='ms-2'>${t.getClassName()}</span></th>
                       <td>${t.getTestName()}</td>
                       <td>${t.getDate()}</td>
                       <td class='align-middle'>
-                        <c:if test="${t.getStatus() == Test.ONGOING}">
-                          <span class='badge bg-warning' style='vertical-align: middle;'>${t.getStatus()}</span>
-                        </c:if>
-                        <c:if test="${t.getStatus() == Test.NOT_GRADED}">
-                          <span class='badge bg-danger' style='vertical-align: middle;'>${t.getStatus()}</span>
-                        </c:if>
-                        <c:if test="${t.getStatus() == Test.GRADED}">
-                          <span class='badge bg-success' style='vertical-align: middle;'>${t.getStatus()}</span>
-                        </c:if>
+                        <span class='badge ${t.getBadgeBg()}' style='vertical-align: middle;'>${t.getStatus()}</span>
                       </td>
                     </tr>
                   </c:forEach>

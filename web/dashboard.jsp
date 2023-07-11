@@ -47,7 +47,7 @@
   <div class="row">
 
     <!-- sidebar -->
-    <div class="col-2 min-vh-100" style="background-color: #212529;">
+    <div class="col-2 min-vh-100 position-fixed" style="background-color: #212529;">
       <div class="p-3">
         <ul class="list-unstyled">
           <li class="mb-1">
@@ -110,7 +110,7 @@
               </ul>
             </div>
           </li>
-          <li class="mb-1" style='position: absolute; bottom: 0rem;'>
+          <li class="mb-1" style='position: absolute; bottom: 4rem;'>
             <hr class='border w-100'>
             <button class="btn btn-dark w-100" style="color: white;">
               <div class="row">
@@ -127,7 +127,7 @@
       </div>
     </div>
 
-    <div class="col-9">
+    <div class="col-9" style='margin-left: 16.667%;'>
       <!-- Search and add Course modal -->
       <div class="row ms-0">
 
@@ -215,7 +215,7 @@
                     <div class="card">
                       <h5 class="card-header">${c.courseName}</h5>
                       <div class="card-body">
-                        <h5 class="card-title">${c.courseDescription}</h5>
+                        <h5 class="card-title">${c.courseDescription}</h5><br>
                         <a href="./course?action=details&courseId=${c.id}" class="btn btn-primary mt-2">
                           <span>Details</span>
                         </a>

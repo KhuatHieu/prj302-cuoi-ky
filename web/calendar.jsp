@@ -19,7 +19,7 @@
 
   <div class="row">
     <!-- sidebar -->
-    <div class="col-2 min-vh-100" style="background-color: #212529;">
+    <div class="col-2 min-vh-100 position-fixed" style="background-color: #212529;">
       <div class="p-3">
         <ul class="list-unstyled">
           <li class="mb-1">
@@ -83,7 +83,7 @@
               </ul>
             </div>
           </li>
-          <li class="mb-1" style='position: absolute; bottom: 0rem;'>
+          <li class="mb-1" style='position: absolute; bottom: 4rem;'>
             <hr class='border w-100'>
             <button class="btn btn-dark w-100" style="color: white;">
               <div class="row">
@@ -101,10 +101,10 @@
     </div>
 
     <!-- calendar -->
-    <div class="col-10">
+    <div class="col-10" style='margin-left: 16.667%;'>
       <style>
         table td:hover {
-          background-color: lightgray;
+          background-color: #DEE2E6;
         }
 
         th, td {
@@ -143,15 +143,8 @@
                 out.print("<td>" + i + "<br>");
                 for (Test test : testList) {
                   if (test.getDayOfMonth() == i) {
-                    if (test.getStatus().equals(Test.ONGOING)) {
-                      out.print("<a href='#' class='badge bg-warning' style='text-decoration: none;'>" + test.getStatus() + "</a>");
-                    }
-                    if (test.getStatus().equals(Test.NOT_GRADED)) {
-                      out.print("<a href='#' class='badge bg-danger' style='text-decoration: none;'>" + test.getStatus() + "</a>");
-                    }
-                    if (test.getStatus().equals(Test.GRADED)) {
-                      out.print("<a href='#' class='badge bg-success' style='text-decoration: none;'>" + test.getStatus() + "</a>");
-                    }
+                    String gotoHref = "./course?action=details&courseId=" + test.getCourseId() + "&testId=" + test.getTestId();
+                    out.print("<a href='" + gotoHref + "' class='badge " + test.getBadgeBg() + "' style='text-decoration: none;'>" + test.getStatus() + "</a>");
                     out.print(test.getTestName() + "<br>");
                   }
                 }

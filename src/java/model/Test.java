@@ -3,10 +3,11 @@ package model;
 import dao.ClassDAO;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
+import java.util.Date;
 
 public class Test {
 
-//  hardcoded in database
+//  hardcoded
 //  PLEASE dont touch
   public static final String ONGOING = "Ongoing", NOT_GRADED = "Not graded",
           GRADED = "Graded";
@@ -48,7 +49,7 @@ public class Test {
   public String getClassName() {
     return new ClassDAO().getClassNameByClassId(classId);
   }
-  
+
   public String getDate() {
     return new SimpleDateFormat("dd/MM/yyyy HH:mm").format(date);
   }
@@ -56,13 +57,47 @@ public class Test {
   public Timestamp getDateTimestamp() {
     return date;
   }
-  
+
+  public int getMonth() {
+    return date.getMonth() + 1;
+  }
+
+  public int getYear() {
+    return date.getYear() + 1900;
+  }
+
   public int getDayOfMonth() {
     return date.toLocalDateTime().getDayOfMonth();
   }
+
+  public boolean isPassedDueDate() {
+    Date current = new Date();
+    Date timestampDate = new Date(date.getTime());
+    
+    return current.after(timestampDate);
+  }
   
   public String getStatus() {
+    if (isPassedDueDate()) {
+      if (status.equals(ONGOING)) {
+        status = NOT_GRADED;
+      }
+    }
     return status;
   }
 
+//  get Bootstrap badge bgs
+//  for front-end
+//  possibile values: bg-warning, bg-success, bg-danger
+  public String getBadgeBg() {
+    switch (getStatus()) {
+      case ONGOING:
+        return "bg-warning";
+      case NOT_GRADED:
+        return "bg-danger";
+      case GRADED:
+        return "bg-success";
+    }
+    return "";
+  }
 }
