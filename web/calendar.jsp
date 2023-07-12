@@ -13,7 +13,7 @@
     Teacher teacher = (Teacher) request.getSession().getAttribute("teacher"); 
   %>
 </head>
-<body>
+<body onload='setDate()'>
   <!-- Navbar -->
   <jsp:include page="navbar.jsp"/>
 
@@ -119,7 +119,84 @@
 
         ArrayList<Test> testList = (ArrayList<Test>) request.getAttribute("testList");
       %>
-      <h1 class='ms-4 mb-3 mt-4' style='vertical-align: middle;'>Calendar</h1>
+
+      <script>
+        function setDate() {
+          var currentUrl = new URL(document.location);
+          var params = new URLSearchParams(currentUrl.search);
+
+          var currMonth = params.get('month');
+          var currYear = params.get('year');
+
+          document.getElementById('myMonth').value = currMonth
+          document.getElementById('myYear').value = currYear
+        }
+
+        function checkDate() {
+          var myMonth = document.getElementById('myMonth').value
+          var myYear = document.getElementById('myYear').value
+
+          var currentUrl = new URL(document.location);
+          var params = new URLSearchParams(currentUrl.search);
+
+          params.set('month', myMonth);
+          params.set('year', myYear);
+
+          var nextUrl = currentUrl.origin + currentUrl.pathname + '?' + params.toString();
+          window.location.href = nextUrl;
+        }
+
+        function downDate() {
+          var myMonth = document.getElementById('myMonth').value
+          var myYear = document.getElementById('myYear').value
+
+          if (myMonth != 1) {
+            document.getElementById('myMonth').value = --myMonth;
+          } else {
+            document.getElementById('myMonth').value = 12
+            document.getElementById('myYear').value = --myYear
+          }
+
+          checkDate()
+        }
+
+        function upDate() {
+          var myMonth = document.getElementById('myMonth').value
+          var myYear = document.getElementById('myYear').value
+
+          if (myMonth != 12) {
+            document.getElementById('myMonth').value = ++myMonth;
+          } else {
+            document.getElementById('myMonth').value = 1
+            document.getElementById('myYear').value = ++myYear
+          }
+
+          checkDate()
+        }
+      </script>
+      <h1 class='ms-4 mb-1 mt-3 align-middle'>
+        Calendar
+      </h1>
+      <div class="input-group ms-4 mb-4 mt-1 align-middle w-25" style='text-align: center;'>      
+        <button class='btn btn-light border' onclick='downDate()'>&lt</button>               
+        <select name='subject' id='myMonth' class="form-select form-control-sm selectpicker" data-live-search="true"
+          style='overflow-y: auto; max-height: 200px;' onchange='checkDate()'>
+          <%
+            for (int i = 1; i <= 12; i++) {
+              out.print("<option value='" + i + "'" + ">" + i + "</option>");
+            }
+          %>
+        </select>
+        <span class="input-group-text">/</span>
+        <select name='term' id='myYear' class="form-select selectpicker" data-live-search="true" onchange='checkDate()'>
+          <%
+            for (int i = 2023; i >= 2000; i--) {
+              out.print("<option value='" + i + "'" + ">" + i + "</option>");
+            }
+          %>
+        </select>
+        <button class='btn btn-light border' onclick='upDate()'>&gt</button> 
+      </div>
 
       <table class='table w-100'>
         <thead>
@@ -145,7 +222,7 @@
                   if (test.getDayOfMonth() == i) {
                     String gotoHref = "./course?action=details&courseId=" + test.getCourseId() + "&testId=" + test.getTestId();
                     out.print("<a href='" + gotoHref + "' class='badge " + test.getBadgeBg() + "' style='text-decoration: none;'>" + test.getStatus() + "</a>");
-                    out.print(test.getTestName() + "<br>");
+                    out.print(" " + test.getTestName() + "<br>");
                   }
                 }
                 out.print("</td>");

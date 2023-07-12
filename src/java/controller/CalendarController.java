@@ -30,8 +30,6 @@ public class CalendarController extends HttpServlet {
     int month = Integer.valueOf(req.getParameter("month"));
     int year = Integer.valueOf(req.getParameter("year"));
     
-    System.out.println(year);
-    
     Calendar c = Calendar.getInstance();
     c.set(Calendar.MONTH, month - 1);
     c.set(Calendar.YEAR, year);

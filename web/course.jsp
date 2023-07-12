@@ -160,6 +160,7 @@
             const year = new Date().getFullYear()
             document.getElementById('calendarHref').href = './calendar?month=' + month + '&year=' + year
           </script>
+
           <li class="mb-1">
             <button class="btn btn-toggle btn-dark w-100" data-bs-toggle="collapse" data-bs-target="#dashboard-collapse" style="color: white;">
               <div class="row">
@@ -208,7 +209,7 @@
       </div>
     </div>
 
-    <div class="col-10 mt-3" style='margin-left: 16.667%;'>
+    <div class="col-10 mt-2" style='margin-left: 16.667%;'>
       <div class="row ms-0">
 
         <!-- Course name header, Tests summary and Test details -->
@@ -370,10 +371,26 @@
             </div>
           </div>
 
-          <!-- Test details -->
+          <!-- Test resources -->
           <c:if test="${not empty test}">
             <div class="rounded border mt-3">
+              <h4 class='ms-3 mt-2'>Test resources [${test.getTestName()}]</h4>
+              <button class='btn btn-sm btn-outline-success mb-3 mt-1 ms-3' style='width: 5rem;'
+                data-bs-toggle="modal" data-bs-target="#createTest">
+                <span class='material-icons align-middle'>
+                  upload
+                </span>
+              </button>
+            </div>
+          </c:if>
+
+          <!-- Test details -->
+          <c:if test="${not empty test}">
+            <div class="rounded border mt-3 mb-3">
               <h4 class='ms-3 mt-2'>Test details [${test.getTestName()}]</h4>
+              <span class='ms-3 mt-2 mb-3' style='color: silver;'>
+                Not implemented yet
+              </span>
             </div>
           </c:if>
         </div>
@@ -510,9 +527,6 @@
                 <div class="input-group">
                   <input type="text" class="form-control" id="basic-url" name="courseDesc"
                           value='${course.getCourseDescription()}'>
-                  <button class='btn btn-sm btn-outline-success border me-4' style='vertical-align: middle;'>
-                    <span class='material-icons align-middle'>done</span>
-                  </button>
                 </div>
               </form>
             </div>
