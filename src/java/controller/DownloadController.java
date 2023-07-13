@@ -32,7 +32,7 @@ public class DownloadController extends HttpServlet {
     response.setContentLength((int) file.length());
     response.setHeader("Content-Disposition", "attachment; filename=\"" + file.getName() + "\"");
 
-    // write file to response output stream
+    // write file to response outputstream
     OutputStream outputStream = response.getOutputStream();
     byte[] buffer = new byte[4096];
     int bytesRead = -1;

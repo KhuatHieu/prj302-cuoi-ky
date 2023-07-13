@@ -65,7 +65,8 @@
 
             <!-- Logout -->
             <li><hr class="dropdown-divider"></li>
-            <li><a class='dropdown-item' href='./logout'>
+            <li>
+              <a class='dropdown-item' href='./logout'>
                 <i class='material-icons' style='vertical-align: middle;'>logout</i>
                 Log out
               </a>

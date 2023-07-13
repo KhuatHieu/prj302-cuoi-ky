@@ -34,7 +34,7 @@ public class CourseController extends HttpServlet {
 
   private void showDetails(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
     req.setAttribute("resourceList",
-            resourceDAO.getResourceList(req.getParameter("courseId")));
+            resourceDAO.getCourseResourceList(req.getParameter("courseId")));
 
     req.setAttribute("courseList",
             courseDAO.getCourseListByTeacherId(((Teacher) req.getSession().getAttribute("teacher")).getTeacherId()));
@@ -49,10 +49,9 @@ public class CourseController extends HttpServlet {
     testList.sort((t1, t2) -> {
 //      On going -> Not graded -> Graded
       final String ORDER = "ONG";
-
       char t1Status = t1.getStatus().charAt(0);
       char t2Status = t2.getStatus().charAt(0);
-
+      
       return ORDER.indexOf(t1Status) - ORDER.indexOf(t2Status);
     });
 
@@ -64,19 +63,33 @@ public class CourseController extends HttpServlet {
       req.setAttribute("testName", testDAO.getTestByTestId(testId).getTestName());
       req.setAttribute("test",
               testDAO.getTestByTestId(Integer.parseInt(req.getParameter("testId"))));
+      req.setAttribute("testResourceList", resourceDAO.getTestResourceList(testId));
     }
 
     req.getRequestDispatcher("course.jsp").forward(req, resp);
   }
 
-  private void uploadResource(HttpServletRequest req, String courseId) throws ServletException, IOException {
+  private void uploadCourseResource(HttpServletRequest req, String courseId) throws ServletException, IOException {
     new ResourceController().uploadCourseResource(req, courseId);
   }
 
-  private void deleteResource(String[] resourceIdList) {
+  private void deleteCourseResource(String[] resourceIdList) {
     if (resourceIdList != null) {
       for (String resourceId : resourceIdList) {
-        resourceDAO.deleteResource(resourceId);
+        resourceDAO.deleteCourseResource(resourceId);
+      }
+    }
+  }
+
+  private void uploadTestResource(HttpServletRequest req, int testId) throws ServletException, IOException {
+    System.out.println("UPDAEDDDDD");
+    new ResourceController().uploadTestResource(req, testId);
+  }
+
+  private void deleteTestResource(String[] testIdList) {
+    if (testIdList != null) {
+      for (String testId : testIdList) {
+        resourceDAO.deleteTestResource(Integer.parseInt(testId));
       }
     }
   }
@@ -128,14 +141,23 @@ public class CourseController extends HttpServlet {
         courseDAO.updateCourseDescription(req.getParameter("courseId"),
                 req.getParameter("courseDesc"));
         break;
-      case "uploadResource":
-        uploadResource(req, req.getParameter("courseId"));
+      case "uploadCourseResource":
+        uploadCourseResource(req, req.getParameter("courseId"));
         break;
-      case "deleteResource":
-        deleteResource(req.getParameterValues("selectedResourceIds"));
+      case "deleteCourseResource":
+        deleteCourseResource(req.getParameterValues("selectedResourceIds"));
+        break;
+      case "deleteTestResource":
+        deleteTestResource(req.getParameterValues("selectedResourceIds"));
+        break;
+      case "uploadTestResource":
+        uploadTestResource(req, Integer.parseInt(req.getParameter("testId")));
         break;
       case "createTest":
         new TestController().createTest(req);
+        break;
+      case "updateTest":
+        new TestController().updateTest(req, Integer.parseInt(req.getParameter("testId")));
         break;
     }
     resp.sendRedirect("./course?" + req.getParameter("queryString"));

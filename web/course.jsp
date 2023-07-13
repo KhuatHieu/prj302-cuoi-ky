@@ -98,8 +98,8 @@
         if (diffYears > 0) {
           estimatedTime += diffYears + ((diffYears === 1) ? ' year ' : ' years ')
         }
-        if (diffMonths > 0) {
-          estimatedTime += diffMonths + ((diffMonths === 1) ? ' month ' : ' months ')
+        if (diffMonths % 12 > 0) {
+          estimatedTime += (diffMonths % 12) + ((diffMonths % 12 === 1) ? ' month ' : ' months ')
         }
         if (diffDays % 30 > 0) {
           estimatedTime += (diffDays % 30) + ((diffDays % 30 === 1) ? ' day ' : ' days ')
@@ -228,8 +228,8 @@
           </h1>
           
           <c:if test="${not empty testId}">
-            <h4  class='ms-3 mb-3' style='margin-top: -1rem;'>
-              / ${testName}
+            <h4 class='ms-3 mb-3' style='margin-top: -1rem;'>
+              /${testName}
             </h4>
           </c:if>
 
@@ -369,25 +369,207 @@
                 </div>
               </div>
             </div>
+
+            <div class="modal fade" id='editTest'>
+              <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <h1 class='modal-title fs-5'>Test preferences</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                  </div>
+                  <form action="course" method="post">
+                    <input type="hidden" name="action" id="" value='updateTest'>
+                    <input type="hidden" name="queryString" value="${pageContext.request.queryString}" />
+                    <input type="hidden" name="testId" id="" value='${testId}'>
+                    <div class='modal-body'>
+                      <div class="row">
+                        <div class="col-8">
+                          <label for="testName" class="form-label">Test name</label>
+                          <div class="input-group">
+                            <input type="text" name='testName' class="form-control" value='${testName}' id="testName" required>
+                          </div>
+                        </div>
+                        <div class="col-4">
+                          <label for="groupName" class="form-label">Class</label>
+                          <select name='classId' id='subject' class="form-select form-control-sm selectpicker" data-live-search="true"
+                                  style='overflow-y: auto; max-height: 200px;'>
+                            <c:forEach items="${classList}" var="c">
+                              <option value="${c.classId}" <c:if test="${c.classId == test.classId}">selected</c:if>>${c.className}</option>
+                            </c:forEach>
+                          </select>
+                        </div>
+                      </div>
+                      <div class="row">
+                        <div class="col-8">
+                          <label for="dueDate" class='form-label mt-3'>
+                            <span>Due date [dd/mm/yyyy]</span>
+                          </label>
+                          <div class="input-group">
+                            <input type="number" class="form-control" name='day' 
+                              placeholder="Day" value='${test.getDayOfMonth()}' id ='day' min='1' onchange='calcEstimatedTime()'>
+                            <span class="input-group-text">/</span>
+                            <input type="number" class="form-control" name='month' 
+                              placeholder="Month" value='${test.getMonth()}' id='month' min='1' max='12' onchange='calcEstimatedTime()'>
+                            <span class="input-group-text">/</span>
+                            <input type="number" class="form-control w-25" name='year' 
+                              placeholder="Year" value='${test.getYear()}' id='year' min='2023' onchange='calcEstimatedTime()'>
+                          </div>
+                        </div>
+
+                        <div class="col-4">
+                          <label for="dueDate" class='form-label mt-3'>Due time</label>
+                          <div class="input-group">
+                            <input type="number" class="form-control" name='hour' 
+                              placeholder="hh" id='hour' value='${test.getHour()}'' min='0' max='23' onchange='calcEstimatedTime()'>
+                            <span class="input-group-text">:</span>
+                            <input type="number" class="form-control" name='minute' 
+                              placeholder="mm" id='minute' value='${test.getMinute()}' max='59' onchange='calcEstimatedTime()'>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="row">
+                        <div class="col-8">
+                          <div class='form-text align-middle' id='estimatedTime'>Estimated time: [Now]</div>
+                        </div>
+                        <div class="col-4">
+                          <a href='#' style='color: white; text-decoration: none;' class='badge bg-primary form-text align-middle' id='' onclick='applyDateValues(); calcEstimatedTime()'>
+                            <span>Reset</span>
+                          </a>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="modal-footer">
+                      <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                      <button type="submit" id='createCourseBtn' class="btn btn-success">Update</button>
+                    </div>
+                  </form>
+                </div>
+              </div>
+            </div>
           </div>
 
           <!-- Test resources -->
           <c:if test="${not empty test}">
             <div class="rounded border mt-3">
-              <h4 class='ms-3 mt-2'>Test resources [${test.getTestName()}]</h4>
-              <button class='btn btn-sm btn-outline-success mb-3 mt-1 ms-3' style='width: 5rem;'
-                data-bs-toggle="modal" data-bs-target="#createTest">
-                <span class='material-icons align-middle'>
-                  upload
-                </span>
-              </button>
+              <div class="row">
+                <div class="col-6">
+                  <h4 class='ms-3 mt-2'>Test resources</h4>
+                  <c:if test="${empty testResourceList}">
+                    <h1 class='ms-3 fs-5' style='color: silver; user-select: none;'>
+                      No resources available
+                    </h1>
+                  </c:if>
+                  <c:if test="${not empty testResourceList}">
+                    <c:forEach items="${testResourceList}" var="r">
+                      <div class="row">
+                        <div class="col-10">
+                          <div class="ms-3 mb-1">
+                            <a href="./download?downloadKey=${r.getDownloadKey()}">
+                              ${r.getName()}
+                            </a>
+                          </div>
+                        </div>
+                        <div class="col-2">
+                          <span class='material-symbols-outlined'>${r.getExtensionIcon()}</span>
+                        </div>
+                      </div>
+                    </c:forEach>
+                  </c:if>
+                  <div class="row">
+                    <div class="col-8">
+                      <button class='btn btn-sm btn-outline-success mb-3 mt-1 ms-3' style='width: 5rem;'
+                        data-bs-toggle="modal" data-bs-target="#uploadTestResource">
+                        <span class='material-icons align-middle'>
+                          upload
+                        </span>
+                      </button>
+                    </div>
+                    <div class="col-4">
+                      <c:if test="${not empty testResourceList}">
+                        <button class='btn btn-sm btn-outline-danger mb-3 mt-1 ms-3' style='width: 5rem;'
+                          data-bs-toggle="modal" data-bs-target="#deleteTestResource">
+                          <span class='material-icons align-middle'>
+                            delete
+                          </span>
+                        </button>
+                      </c:if>
+                    </div>
+                  </div>
+                </div> 
+                <div class="col-6">
+                  <h4 class='ms-3 mt-2'>Test preferences</h4>
+                  <button class='ms-3 mt-1 btn btn-outline-success material-symbols-outlined' style='width: 5rem;'
+                    data-bs-toggle="modal" data-bs-target="#editTest">
+                    settings
+                  </button>
+                </div>
+              </div>
             </div>
           </c:if>
+
+          <div class="modal fade" id='uploadTestResource' data-bs-backdrop='static'>
+            <div class="modal-dialog modal-dialog-centered">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h1 class='modal-title fs-5'>Upload test resources</h1>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form action="course" method="post" enctype='multipart/form-data'>
+                  <input type="hidden" name="action" id="" value='uploadTestResource'>
+                  <input type="hidden" name="queryString" value="${pageContext.request.queryString}" />
+                  <input type="hidden" name="testId" id="" value='${testId}'>
+                  <div class='modal-body'>
+                    <label for="formFiles" class="form-label">You can choose multiple files</label>
+                    <input class="form-control" type="file" id="formFiles" name='file' multiple>
+                    <div class="form-text">
+                      Maximum file size: 50MB
+                    </div>
+                  </div>
+                  <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="submit" id='createCourseBtn' class="btn btn-success">Upload</button>
+                  </div>
+                </form>
+              </div>
+            </div>
+          </div>
+
+          <div class="modal fade" id='deleteTestResource' data-bs-backdrop='static'>
+            <div class="modal-dialog modal-dialog-centered">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h1 class='modal-title fs-5'>Delete test resources</h1>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form action="course" method="post" name='resourceIdList'>
+                  <input type="hidden" name="action" id="" value='deleteTestResource'>
+                  <input type="hidden" name="queryString" value="${pageContext.request.queryString}" />
+                  <input type="hidden" name="testId" id="" value='${testId}'>
+                  <div class="modal-body">
+                    <label for="form-check">Mark all the resources which you want to be deleted</label>
+                    <div class="form-check mt-1" id='form-check'>
+                      <c:forEach items="${testResourceList}" var="r">
+                        <input class="form-check-input" type='checkbox' name='selectedResourceIds' value='${r.getId()}'>
+                        <label for="${r.getName()}">
+                          ${r.getName()}
+                        </label>
+                        <br>
+                      </c:forEach>
+                    </div>
+                  </div>
+                  <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="submit" id='createCourseBtn' class="btn btn-danger">Delete</button>
+                  </div>
+                </form>
+              </div>
+            </div>
+          </div>
 
           <!-- Test details -->
           <c:if test="${not empty test}">
             <div class="rounded border mt-3 mb-3">
-              <h4 class='ms-3 mt-2'>Test details [${test.getTestName()}]</h4>
+              <h4 class='ms-3 mt-2'>Student answers [${test.getTestName()}]</h4>
               <span class='ms-3 mt-2 mb-3' style='color: silver;'>
                 Not implemented yet
               </span>
@@ -398,8 +580,8 @@
         <!-- Resources and Preferences -->
         <div class="col-4">
           <!-- Resources -->
-          <div class="rounded border">
-            <h4 class='ms-3 mt-2'>General resources</h4>
+          <div class="rounded border mt-2">
+            <h4 class='ms-3 mt-2'>Course resources</h4>
 
             <c:if test="${empty resourceList}">
               <h1 class='ms-3 fs-5' style='color: silver; user-select: none;'>
@@ -423,20 +605,20 @@
 
             <div class="row">
               <div class="col-8">
-                <button class='btn btn-sm btn-outline-success ms-3 mb-3 mt-2' style='width: 5rem;' data-bs-toggle='modal' data-bs-target='#uploadResource' tabindex='-1'>
+                <button class='btn btn-sm btn-outline-success ms-3 mb-3 mt-2' style='width: 5rem;' data-bs-toggle='modal' data-bs-target='#uploadCourseResource' tabindex='-1'>
                   <i class='material-icons align-middle'>upload</i>
                 </button>
               </div>
               <div class="col-4">
                 <c:if test="${not empty resourceList}">
-                  <button class='btn btn-sm btn-outline-danger ms-3 mb-3 mt-2' style='width: 5rem;' data-bs-toggle='modal' data-bs-target="#deleteResource" tabindex='-1'>
+                  <button class='btn btn-sm btn-outline-danger ms-3 mb-3 mt-2' style='width: 5rem;' data-bs-toggle='modal' data-bs-target="#deleteCourseResource" tabindex='-1'>
                     <i class='material-icons align-middle'>delete</i>
                   </button>
                 </c:if>
               </div>
             </div>
 
-            <div class="modal fade" id='uploadResource' data-bs-backdrop='static'>
+            <div class="modal fade" id='uploadCourseResource' data-bs-backdrop='static'>
               <div class="modal-dialog modal-dialog-centered">
                 <div class="modal-content">
                   <div class="modal-header">
@@ -444,7 +626,7 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                   </div>
                   <form action="course" method="post" enctype='multipart/form-data'>
-                    <input type="hidden" name="action" id="" value='uploadResource'>
+                    <input type="hidden" name="action" id="" value='uploadCourseResource'>
                     <input type="hidden" name="queryString" value="${pageContext.request.queryString}" />
                     <input type="hidden" name="courseId" id="" value='${courseId}'>
                     <div class='modal-body'>
@@ -463,7 +645,7 @@
               </div>
             </div>
 
-            <div class="modal fade" id='deleteResource' data-bs-backdrop='static'>
+            <div class="modal fade" id='deleteCourseResource' data-bs-backdrop='static'>
               <div class="modal-dialog modal-dialog-centered">
                 <div class="modal-content">
                   <div class="modal-header">
@@ -471,7 +653,7 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                   </div>
                   <form action="course" method="post" name='resourceIdList'>
-                    <input type="hidden" name="action" id="" value='deleteResource'>
+                    <input type="hidden" name="action" id="" value='deleteCourseResource'>
                     <input type="hidden" name="queryString" value="${pageContext.request.queryString}" />
                     <input type="hidden" name="courseId" id="" value='${courseId}'>
                     <div class="modal-body">
@@ -527,6 +709,9 @@
                 <div class="input-group">
                   <input type="text" class="form-control" id="basic-url" name="courseDesc"
                           value='${course.getCourseDescription()}'>
+                  <button class='btn btn-sm btn-outline-success border me-4' style='vertical-align: middle;'>
+                    <span class='material-icons align-middle'>done</span>
+                  </button>
                 </div>
               </form>
             </div>

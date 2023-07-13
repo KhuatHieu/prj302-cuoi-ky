@@ -20,7 +20,7 @@ public class ResourceController extends HttpServlet {
 
   public void uploadCourseResource(HttpServletRequest req, String courseId) throws ServletException, IOException {
     for (Part filePart : (ArrayList<Part>) req.getParts()) {
-      if (filePart.getName().equals("file")) {
+      if (filePart.getName().equals("file") && filePart.getSize() > 0) {
         String fileName = "";
         do {
           fileName = File.getUniqueFileName(filePart);
@@ -35,7 +35,7 @@ public class ResourceController extends HttpServlet {
 
   public void uploadTestResource(HttpServletRequest req, int testId) throws ServletException, IOException {
     for (Part filePart : (ArrayList<Part>) req.getParts()) {
-      if (filePart.getName().equals("file")) {
+      if (filePart.getName().equals("file") && filePart.getSize() > 0) {
         String fileName = "";
         do {
           fileName = File.getUniqueFileName(filePart);
@@ -45,18 +45,6 @@ public class ResourceController extends HttpServlet {
 
         filePart.write(dbPath + fileName);
       }
-    }
-  }
-
-  public void deleteTestResource(HttpServletRequest req, ArrayList<Integer> testIdList) {
-    for (int testId : testIdList) {
-      System.out.println(testId);
-    }
-  }
-
-  public void deleteCourseResource(HttpServletRequest req, ArrayList<String> resourceIdList) {
-    for (String resId : resourceIdList) {
-      System.out.println(resId);
     }
   }
 }

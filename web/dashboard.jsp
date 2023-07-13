@@ -185,14 +185,14 @@
 
                   <div class="input-group mt-1">
                     <div class="input-group-text">
-                      <input class="form-check-input mt-0" type="radio" name='courseName' id='customCourseName' aria-label="Checkbox for following text input">
+                      <input disabled class="form-check-input mt-0" type="radio" name='courseName' id='customCourseName' aria-label="Checkbox for following text input">
                     </div>
                     <input type="text" class="form-control" id='myCustomCourseName' aria-label="Text input with checkbox" 
-                      placeholder='Use a custom name instead? // TODO'>
+                      placeholder='Use a custom name instead? // TODO' disabled>
                   </div>
 
                   <label for="description" class='form-label mt-3'>Course description</label>
-                  <input name='description' id='description' type="text" class="form-control" placeholder="Description" aria-label="Description">
+                  <input name='description' id='description' type="text" class="form-control" placeholder="Course description. Optional">
                 </div>
                 <div class="modal-footer">
                   <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
@@ -262,9 +262,6 @@
       </div>
     </div>
   </div>
-
-
-
 </body>
 
 </html>

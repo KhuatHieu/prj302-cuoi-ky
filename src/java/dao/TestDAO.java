@@ -40,6 +40,37 @@ public class TestDAO extends DBContext {
     return -1;
   }
 
+  public void updateTest(int testId, String testName, int classId, Timestamp dueDate) {
+    try {
+      String strQuery = "UPDATE dbo.Test\n"
+              + "SET TestName = ?, ClassId = ?, DueDate = ?\n"
+              + "WHERE TestId = ?";
+      PreparedStatement stm = connection.prepareStatement(strQuery);
+      stm.setString(1, testName);
+      stm.setInt(2, classId);
+      stm.setTimestamp(3, dueDate);
+      stm.setInt(4, testId);
+
+      stm.execute();
+    } catch (SQLException e) {
+      e.printStackTrace();
+    }
+  }
+
+  public void setStatus(int testId, String status) {
+    try {
+      String strQuery = "UPDATE dbo.Test\n"
+              + "SET Status = ? WHERE TestId = ?";
+      PreparedStatement stm = connection.prepareStatement(strQuery);
+      stm.setString(1, status);
+      stm.setInt(2, testId);
+
+      stm.execute();
+    } catch (SQLException e) {
+      e.printStackTrace();
+    }
+  }
+
   public Test getTestByTestId(int testId) {
     try {
       String strQuery = "SELECT * FROM dbo.Test WHERE TestId = ?";
@@ -88,7 +119,7 @@ public class TestDAO extends DBContext {
     }
     return testList;
   }
-  
+
   public ArrayList<Test> getTestListByTeacherId(int teacherId) {
     ArrayList<Test> testList = new ArrayList<>();
 
@@ -118,7 +149,7 @@ public class TestDAO extends DBContext {
     return testList;
   }
 
-  public void deleteCourse(int testId) {
+  public void deleteTest(int testId) {
     try {
       String strQuery = "SELECT * FROM dbo.Test WHERE TestId = ?";
       PreparedStatement stm = connection.prepareStatement(strQuery);

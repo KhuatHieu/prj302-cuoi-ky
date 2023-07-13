@@ -69,8 +69,8 @@ public class ResourceDAO extends DBContext {
       e.printStackTrace();
     }
   }
-  
-  public ArrayList<Resource> getResourceList(String courseId) {
+
+  public ArrayList<Resource> getCourseResourceList(String courseId) {
     ArrayList<Resource> resourceList = new ArrayList<>();
 
     try {
@@ -95,9 +95,35 @@ public class ResourceDAO extends DBContext {
     }
     return resourceList;
   }
-  
+
+  public ArrayList<Resource> getTestResourceList(int testId) {
+    ArrayList<Resource> resourceList = new ArrayList<>();
+
+    try {
+      String strQuery = "SELECT * \n"
+              + "FROM dbo.Resource r\n"
+              + "INNER JOIN dbo.TestResource tr\n"
+              + "ON tr.ResourceId = r.ResourceId\n"
+              + "WHERE tr.TestId = ?";
+      PreparedStatement stm = connection.prepareStatement(strQuery);
+      stm.setInt(1, testId);
+
+      ResultSet rs = stm.executeQuery();
+      while (rs.next()) {
+        resourceList.add(new Resource(
+                rs.getString(1),
+                rs.getString(2),
+                rs.getString(3)
+        ));
+      }
+    } catch (SQLException e) {
+      e.printStackTrace();
+    }
+    return resourceList;
+  }
+
 //  delete in both DB and physical drive
-  public void deleteResource(String resourceId) {
+  public void deleteCourseResource(String resourceId) {
     try {
 //      Get filePath from resourceId
       String strQuery = "SELECT * \n"
@@ -126,6 +152,41 @@ public class ResourceDAO extends DBContext {
               + "WHERE ResourceId = ?";
       PreparedStatement stm2 = connection.prepareStatement(dfCourseResource);
       stm2.setString(1, resourceId);
+      stm2.executeUpdate();
+    } catch (SQLException e) {
+      e.printStackTrace();
+    }
+  }
+  
+  public void deleteTestResource(int testId) {
+    try {
+//      Get filePath from resourceId
+      String strQuery = "SELECT * \n"
+              + "FROM dbo.Resource\n"
+              + "WHERE ResourceId = ?";
+      PreparedStatement stm = connection.prepareStatement(strQuery);
+      stm.setInt(1, testId);
+
+//      Delete the filePath
+//      TODO: sql transaction
+      ResultSet rs = stm.executeQuery();
+      if (rs.next()) {
+        new File(rs.getString(3)).delete();
+      }
+
+//      Delete record in dbo.CourseResource
+//      why not DELETE CASCADE ?
+      String dfResource = "DELETE FROM	dbo.TestResource\n"
+              + "WHERE ResourceId = ?";
+      PreparedStatement stm1 = connection.prepareStatement(dfResource);
+      stm1.setInt(1, testId);
+      stm1.executeUpdate();
+
+//      Delete record in dbo.Resource
+      String dfCourseResource = "DELETE FROM dbo.Resource\n"
+              + "WHERE ResourceId = ?";
+      PreparedStatement stm2 = connection.prepareStatement(dfCourseResource);
+      stm2.setInt(1, testId);
       stm2.executeUpdate();
     } catch (SQLException e) {
       e.printStackTrace();

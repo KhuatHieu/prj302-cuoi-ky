@@ -3,13 +3,11 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/D:/prj302-cuoi-ky/src/java/dao/ClassDAO.java</file>
-            <file>file:/D:/prj302-cuoi-ky/src/java/controller/auth/LoginController.java</file>
             <file>file:/D:/prj302-cuoi-ky/src/java/dao/ResourceDAO.java</file>
             <file>file:/D:/prj302-cuoi-ky/src/java/controller/CourseController.java</file>
-            <file>file:/D:/prj302-cuoi-ky/src/java/controller/TestController.java</file>
-            <file>file:/D:/prj302-cuoi-ky/src/java/dao/TestDAO.java</file>
+            <file>file:/D:/prj302-cuoi-ky/src/java/dao/CourseDAO.java</file>
             <file>file:/D:/prj302-cuoi-ky/src/java/controller/ResourceController.java</file>
+            <file>file:/D:/prj302-cuoi-ky/src/java/controller/CalendarController.java</file>
         </group>
     </open-files>
 </project-private>

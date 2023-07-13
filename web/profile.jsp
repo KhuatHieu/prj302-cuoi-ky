@@ -57,9 +57,6 @@
           <h2 class='mt-3' style='text-align: center;'>${teacher.getFullName()}</h2>
           <center><span class='mt-3' style='text-align: center;'>@${teacher.getUsername()}</span></center>
           <center><i class='material-icons' style='font-size: 120px; text-align: center;'>account_circle</i></center>
-          <div class="mt-3">
-            <center><button class='btn btn-secondary mb-3'>Change profile picture</button></center>
-          </div>
         </div>
       </div>
 

@@ -1,6 +1,7 @@
 package model;
 
 import dao.ClassDAO;
+import dao.TestDAO;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -28,6 +29,12 @@ public class Test {
     this.classId = classId;
     this.date = date;
     this.status = status;
+    if (status.equals(ONGOING)) {
+      if (isPassedDueDate()) {
+        this.status = NOT_GRADED;
+        new TestDAO().setStatus(testId, NOT_GRADED);
+      }
+    }
   }
 
   public int getTestId() {
@@ -58,6 +65,18 @@ public class Test {
     return date;
   }
 
+  public int getHour() {
+    return date.getHours();
+  }
+  
+  public int getMinute() {
+    return date.getMinutes();
+  }
+  
+  public int getDayOfMonth() {
+    return date.toLocalDateTime().getDayOfMonth();
+  }
+
   public int getMonth() {
     return date.getMonth() + 1;
   }
@@ -66,23 +85,14 @@ public class Test {
     return date.getYear() + 1900;
   }
 
-  public int getDayOfMonth() {
-    return date.toLocalDateTime().getDayOfMonth();
-  }
-
   public boolean isPassedDueDate() {
     Date current = new Date();
     Date timestampDate = new Date(date.getTime());
-    
+
     return current.after(timestampDate);
   }
-  
+
   public String getStatus() {
-    if (isPassedDueDate()) {
-      if (status.equals(ONGOING)) {
-        status = NOT_GRADED;
-      }
-    }
     return status;
   }
 
@@ -92,7 +102,7 @@ public class Test {
   public String getBadgeBg() {
     switch (getStatus()) {
       case ONGOING:
-        return "bg-warning";
+        return "bg-warning text-dark";
       case NOT_GRADED:
         return "bg-danger";
       case GRADED:
