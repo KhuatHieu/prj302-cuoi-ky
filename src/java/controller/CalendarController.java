@@ -17,7 +17,9 @@ public class CalendarController extends HttpServlet {
 
   @Override
   protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-    LoginController.checkLogin(req, resp);
+    if (!LoginController.isLogin(req, resp)) {
+      return;
+    }
     Teacher teacher = (Teacher) req.getSession().getAttribute("teacher");
     int teacherId = teacher.getTeacherId();
 
@@ -46,8 +48,11 @@ public class CalendarController extends HttpServlet {
         testList.add(test);
       }
     }
+    testList.sort((t1, t2) -> {
+      return t1.getDateTimestamp().compareTo(t2.getDateTimestamp());
+    });
     req.setAttribute("testList", testList);
-    
+
     int notGradedCount = 0, ongoingCount = 0, gradedCount = 0;
     for (Test test : testList) {
       switch (test.getStatus()) {

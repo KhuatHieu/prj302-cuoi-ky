@@ -7,12 +7,11 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
-import model.Course;
 import model.Test;
 
 public class TestDAO extends DBContext {
 
-//  return IDENTITY (testId)
+//  return IDENTITY (testId) to upload resources according to this testId
   public int createTest(String testName, int courseId, int classId, Timestamp dueDate) {
     try {
       String strQuery = "INSERT INTO dbo.Test\n"

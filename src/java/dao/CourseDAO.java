@@ -80,6 +80,14 @@ public class CourseDAO extends DBContext {
     return courseList;
   }
 
+  public boolean isHavePermission(int teacherId, int courseId) {
+    ArrayList<Integer> courseIdList = new ArrayList<>();
+    for (Course c : getCourseListByTeacherId(teacherId)) {
+      courseIdList.add(c.getId());
+    }
+    return courseIdList.contains(courseId);
+  }
+  
   public void createCourse(String courseName, String description, int subjectId, int teacherId) {
     try {
       String strQuery = "INSERT INTO dbo.Course VALUES (?, ?, ?, ?)";

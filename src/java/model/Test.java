@@ -4,6 +4,8 @@ import dao.ClassDAO;
 import dao.TestDAO;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
+import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.Date;
 
 public class Test {
@@ -58,7 +60,7 @@ public class Test {
   }
 
   public String getDate() {
-    return new SimpleDateFormat("dd/MM/yyyy HH:mm").format(date);
+    return new SimpleDateFormat("HH:mm dd/MM/yyyy").format(date);
   }
 
   public Timestamp getDateTimestamp() {
@@ -68,11 +70,11 @@ public class Test {
   public int getHour() {
     return date.getHours();
   }
-  
+
   public int getMinute() {
     return date.getMinutes();
   }
-  
+
   public int getDayOfMonth() {
     return date.toLocalDateTime().getDayOfMonth();
   }
@@ -90,6 +92,32 @@ public class Test {
     Date timestampDate = new Date(date.getTime());
 
     return current.after(timestampDate);
+  }
+
+  public String getRemainingTime() {
+    LocalDateTime now = LocalDateTime.now();
+    LocalDateTime dueDateTime = date.toLocalDateTime();
+
+    Duration duration = Duration.between(now, dueDateTime);
+    String out = "";
+    if (isPassedDueDate()) {
+      out = "Passed ";
+    }
+    
+    boolean haveDays = false;
+    if (duration.toDays() != 0) {
+      out = out + "~" + Math.abs(duration.toDays()) + "d ";
+      haveDays = true;
+    }
+    if (duration.toHours() % 24 != 0) {
+      out = out + Math.abs(duration.toHours()) % 24 + "h ";
+    }
+    if (duration.toMinutes() % 60 != 0) {
+      if (haveDays == false) {
+        out = out + Math.abs(duration.toMinutes()) % 60 + "m";
+      }
+    }
+    return out + (isPassedDueDate() ? " ago" : "");
   }
 
   public String getStatus() {

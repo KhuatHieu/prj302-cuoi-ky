@@ -23,7 +23,9 @@ public class DashboardController extends HttpServlet {
 
   @Override
   public void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-    LoginController.checkLogin(req, resp);
+    if (!LoginController.isLogin(req, resp)) {
+      return;
+    }
     req.setAttribute("subjectList", subjectDAO.getSubjectList());
 
     int teacherId = ((Teacher) req.getSession().getAttribute("teacher")).getTeacherId();
@@ -34,7 +36,7 @@ public class DashboardController extends HttpServlet {
 
   @Override
   protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-    LoginController.checkLogin(req, resp);
+    LoginController.isLogin(req, resp);
     req.setAttribute("subjectList", subjectDAO.getSubjectList());
 
     int teacherId = ((Teacher) req.getSession().getAttribute("teacher")).getTeacherId();

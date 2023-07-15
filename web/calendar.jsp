@@ -68,7 +68,7 @@
                 <c:forEach items="${courseList}" var="c">
                   <li>
                     <a href="./course?action=details&courseId=${c.id}" class="btn w-100 btn-dark align-items-center" 
-                      style="font-size: medium; color: white; text-align: left;">
+                        style="font-size: medium; color: white; text-align: left;">
                       <div class="row align-items-center ms-0">
                         <div class="col-2">
                           <span class="material-symbols-outlined align-middle">school</span>
@@ -116,12 +116,6 @@
         .test-className {
           border-top-left-radius: 0px;
           border-bottom-left-radius: 0px;
-        }
-
-        .test-name:hover,
-        .test-name:hover + .test-className {
-          outline: 2px dashed black;
-          outline-offset: -1px;
         }
 
         table td:hover {
@@ -182,7 +176,7 @@
           var myMonth = document.getElementById('myMonth').value
           var myYear = document.getElementById('myYear').value
 
-          if (myMonth != 12) {
+          if (myMonth !== 12) {
             document.getElementById('myMonth').value = ++myMonth;
           } else {
             document.getElementById('myMonth').value = 1
@@ -199,16 +193,18 @@
           </h1>
           <div class="input-group ms-4 mb-3 align-middle w-75" style='text-align: center;'>      
             <button class='btn btn-light border' onclick='downDate()'>&lt</button>               
-            <select name='subject' id='myMonth' class="form-select form-control-sm selectpicker" data-live-search="true"
-              style='overflow-y: auto; max-height: 200px;' onchange='checkRequestedDate()'>
-              <c:forEach var="i" begin="1" end="12">
-                <option value="${i}" <c:if test="${i ==  month}">selected</c:if>>${i}</option>
+            <select name='subject' id='myMonth' class="selectpicker border" data-width='5rem' onchange='checkRequestedDate()'>
+              <c:forEach var="i" begin="1" end="9">
+                <option value="${i}" <c:if test="${i == month}">selected</c:if>>0${i}</option>
+              </c:forEach>
+              <c:forEach var="i" begin="10" end="12">
+                <option value="${i}" <c:if test="${i == month}">selected</c:if>>${i}</option>
               </c:forEach>
             </select>
-            <span class="input-group-text">/</span>
-            <select name='term' id='myYear' class="form-select selectpicker" data-live-search="true" onchange='checkRequestedDate()'>
+            <span class="input-group-text border">/</span>
+            <select name='term' id='myYear' class="selectpicker border" data-width='fit' onchange='checkRequestedDate()'>
               <c:forEach var="i" begin="2020" end="2024" step="1">
-                <option value="${i}" <c:if test="${i ==  year}">selected</c:if>>${i}</option>
+                <option value="${i}" <c:if test="${i == year}">selected</c:if>>${i}</option>
               </c:forEach>
             </select>
             <button class='btn btn-light border' onclick='upDate()'>&gt</button> 
@@ -263,16 +259,17 @@
                   out.print("<td><div>" + i + "</div>");
                 }
                 for (Test test : testList) {
-                  out.print("<div class='d-flex flex-row-reverse'>");
                   if (test.getDayOfMonth() == i) {
                     String gotoHref = "./course?action=details&courseId=" + test.getCourseId() + "&testId=" + test.getTestId();
-                    out.print("<div><a href='" + gotoHref + "' class='badge test-name " + test.getBadgeBg() + "' style='text-decoration: none;'>" 
-                      + test.getTestName() + "</a>");
-                    out.print("<a href='" + gotoHref + "' class='badge test-className bg-dark' style='text-decoration: none;'>" 
-                      + test.getClassName() + "</a></div>");
+                    out.print(String.format("<div class='d-flex flex-row-reverse'>" +
+                      "<a href='%s' data-bs-toggle='tooltip' data-bs-title='%s' data-bs-placement='right'>" +
+                      "<span class='badge test-name %s badge-className' style='text-decoration: none;'>%s</span>" +
+                      "<span class='badge test-className bg-dark'>%s</span>" +
+                      "</a>" +
+                      "</div>",
+                      gotoHref, test.getRemainingTime(), test.getBadgeBg(), test.getTestName(), test.getClassName()));              
                   }
-                  out.print("</div>");
-                }
+                }              
                 out.print("</td>");
                 if ((startDayOfMonth + i) % 7 == 0) {
                   out.print("<tr></tr>");
@@ -290,5 +287,11 @@
       </table>
     </div>
   </div>
+  <script>
+    var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+    var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+      return new bootstrap.Tooltip(tooltipTriggerEl)
+    })
+  </script>
 </body>
 </html>

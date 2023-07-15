@@ -32,7 +32,15 @@ public class CourseController extends HttpServlet {
 
   private HttpSession session;
 
+  private void checkPermission(HttpServletRequest req) throws ServletException, IOException {
+    int teacherId = ((Teacher) req.getSession().getAttribute("teacher")).getTeacherId();
+    int courseId = Integer.parseInt(req.getParameter("courseId"));
+
+    req.setAttribute("isHavePermission", courseDAO.isHavePermission(teacherId, courseId));
+  }
+
   private void showDetails(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+    checkPermission(req);
     req.setAttribute("resourceList",
             resourceDAO.getCourseResourceList(req.getParameter("courseId")));
 
@@ -47,12 +55,7 @@ public class CourseController extends HttpServlet {
 
     ArrayList<Test> testList = new TestDAO().getTestListByCourseId(Integer.parseInt(req.getParameter("courseId")));
     testList.sort((t1, t2) -> {
-//      On going -> Not graded -> Graded
-      final String ORDER = "ONG";
-      char t1Status = t1.getStatus().charAt(0);
-      char t2Status = t2.getStatus().charAt(0);
-      
-      return ORDER.indexOf(t1Status) - ORDER.indexOf(t2Status);
+      return -t1.getDateTimestamp().compareTo(t2.getDateTimestamp());
     });
 
     req.setAttribute("testList", testList);
@@ -64,6 +67,7 @@ public class CourseController extends HttpServlet {
       req.setAttribute("test",
               testDAO.getTestByTestId(Integer.parseInt(req.getParameter("testId"))));
       req.setAttribute("testResourceList", resourceDAO.getTestResourceList(testId));
+      req.setAttribute("studentList", new StudentDAO().getStudentList());
     }
 
     req.getRequestDispatcher("course.jsp").forward(req, resp);
@@ -82,7 +86,6 @@ public class CourseController extends HttpServlet {
   }
 
   private void uploadTestResource(HttpServletRequest req, int testId) throws ServletException, IOException {
-    System.out.println("UPDAEDDDDD");
     new ResourceController().uploadTestResource(req, testId);
   }
 
@@ -94,6 +97,14 @@ public class CourseController extends HttpServlet {
     }
   }
 
+  private void markTestAsGraded(int testId) {
+    new TestDAO().setStatus(testId, Test.GRADED);
+  }
+
+  private void markTestAsNotGraded(int testId) {
+    new TestDAO().setStatus(testId, Test.NOT_GRADED);
+  }
+
   private void addCourse(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
     int subjectId = Integer.parseInt(req.getParameter("subjectId"));
     String subjectName = req.getParameter("subjectName");
@@ -103,7 +114,7 @@ public class CourseController extends HttpServlet {
     String tShortName = req.getParameter("tShortName");
 
     courseDAO.createCourse(subjectName + " - " + term + " - " + tShortName,
-            description.isEmpty() ? "No descriptions" : description,
+            description.isEmpty() ? new SubjectDAO().getSubjectDetails(subjectId) : description,
             subjectId, teacherId);
     resp.sendRedirect("./");
   }
@@ -115,7 +126,9 @@ public class CourseController extends HttpServlet {
 
   @Override
   protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-    LoginController.checkLogin(req, resp);
+    if (!LoginController.isLogin(req, resp)) {
+      return;
+    }
     session = req.getSession(false);
     switch (req.getParameter("action")) {
       case "details":
@@ -158,6 +171,12 @@ public class CourseController extends HttpServlet {
         break;
       case "updateTest":
         new TestController().updateTest(req, Integer.parseInt(req.getParameter("testId")));
+        break;
+      case "markTestAsGraded":
+        markTestAsGraded(Integer.parseInt(req.getParameter("testId")));
+        break;
+      case "markTestAsNotGraded":
+        markTestAsNotGraded(Integer.parseInt(req.getParameter("testId")));
         break;
     }
     resp.sendRedirect("./course?" + req.getParameter("queryString"));

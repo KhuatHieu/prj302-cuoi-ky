@@ -29,4 +29,22 @@ public class SubjectDAO extends DBContext {
     }
     return subjectList;
   }
+
+  public String getSubjectDetails(int subjectId) {
+    try {
+      String strQuery = "SELECT * \n"
+              + "FROM dbo.Subject\n"
+              + "WHERE SubjectID = ?";
+      PreparedStatement stm = connection.prepareStatement(strQuery);
+      stm.setInt(1, subjectId);
+      
+      ResultSet rs = stm.executeQuery();
+      if (rs.next()) {
+        return rs.getString(3);
+      }
+    } catch (SQLException e) {
+      e.printStackTrace();
+    }
+    return "";
+  }
 }

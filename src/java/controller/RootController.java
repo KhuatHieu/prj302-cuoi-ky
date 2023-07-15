@@ -15,7 +15,7 @@ public class RootController extends HttpServlet {
     if (req.getSession().getAttribute("teacher") != null) {
       new DashboardController().doGet(req, resp);
     } else {
-      resp.sendRedirect(req.getContextPath() + "/login");
+      resp.sendRedirect("./login");
     }
   }
 

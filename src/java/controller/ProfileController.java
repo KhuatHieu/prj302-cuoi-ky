@@ -32,7 +32,9 @@ public class ProfileController extends HttpServlet {
   
   @Override
   protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-    LoginController.checkLogin(req, resp);
+    if (!LoginController.isLogin(req, resp)) {
+      return;
+    }
     if (req.getAttribute("action") != null) {
       this.doPost(req, resp);
     }

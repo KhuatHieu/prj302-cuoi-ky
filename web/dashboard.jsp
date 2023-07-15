@@ -165,14 +165,14 @@
                     <div class="input-group-text">
                       <input class="form-check-input mt-0" type="radio" name='courseName' value="formattedName" checked>
                     </div>
-                    <select name='subject' id='subject' class="form-select form-control-sm selectpicker" data-live-search="true"
+                    <select name='subject' id='subject' class="form-control selectpicker border" data-live-search="true"
                       style='overflow-y: auto; max-height: 200px;'>
                       <c:forEach items="${subjectList}" var="s">
                         <option value="${s.subjectId}">${s.subjectName}</option>
                       </c:forEach>
                     </select>
                     <span class="input-group-text">-</span>
-                    <select name='term' id='term' class="form-select selectpicker" data-live-search="true">
+                    <select name='term' id='term' class="form-control border selectpicker">
                       <option value="SU22">SU22</option>
                       <option value="FA22">FA22</option>
                       <option value="SP23">SP23</option>
@@ -182,7 +182,6 @@
                     <span class="input-group-text">-</span>
                     <input name='tShortName' id='tShortName' type="text" class="form-control" placeholder="TShortName" aria-label="TShortName" value='<%=teacher.getShortName()%>'>
                   </div>
-
                   <div class="input-group mt-1">
                     <div class="input-group-text">
                       <input disabled class="form-check-input mt-0" type="radio" name='courseName' id='customCourseName' aria-label="Checkbox for following text input">
@@ -192,7 +191,7 @@
                   </div>
 
                   <label for="description" class='form-label mt-3'>Course description</label>
-                  <input name='description' id='description' type="text" class="form-control" placeholder="Course description. Optional">
+                  <input name='description' id='description' type="text" class="form-control" placeholder="Optional. Leave blank to auto-generate">
                 </div>
                 <div class="modal-footer">
                   <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
