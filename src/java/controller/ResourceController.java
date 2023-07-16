@@ -1,5 +1,6 @@
 package controller;
 
+import dao.AnswerDAO;
 import dao.ResourceDAO;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -46,5 +47,29 @@ public class ResourceController extends HttpServlet {
         filePart.write(dbPath + fileName);
       }
     }
+  }
+
+  public void uploadAnswerResource(HttpServletRequest req, int testId) throws ServletException, IOException {
+    for (Part filePart : (ArrayList<Part>) req.getParts()) {
+      if (filePart.getName().equals("file") && filePart.getSize() > 0) {
+        String fileName = "";
+        do {
+          fileName = File.getUniqueFileName(filePart);
+        } while (new java.io.File(dbPath + fileName).isFile());
+
+        int answerId = new AnswerDAO().createAnswer(
+                Integer.parseInt(req.getParameter("studentId")),
+                testId);
+        
+        resourceDAO.uploadAnswerResource(answerId, filePart.getSubmittedFileName(), dbPath + fileName);
+
+        filePart.write(dbPath + fileName);
+      }
+    }
+  }
+  
+  public void deleteResource(int resourceId) {
+    String fileName = File.databasePath + new ResourceDAO().getResourceByResourceId(resourceId).getName();
+    new java.io.File(fileName).delete();
   }
 }

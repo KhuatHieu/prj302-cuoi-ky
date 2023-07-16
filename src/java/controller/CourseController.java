@@ -13,6 +13,7 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
+import java.sql.SQLException;
 import java.util.ArrayList;
 
 @WebServlet(name = "course", urlPatterns = {"/course"})
@@ -67,6 +68,7 @@ public class CourseController extends HttpServlet {
       req.setAttribute("test",
               testDAO.getTestByTestId(Integer.parseInt(req.getParameter("testId"))));
       req.setAttribute("testResourceList", resourceDAO.getTestResourceList(testId));
+      req.setAttribute("answerList", new AnswerDAO().getAnswerListByTestId(testId));
       req.setAttribute("studentList", new StudentDAO().getStudentList());
     }
 
@@ -105,6 +107,16 @@ public class CourseController extends HttpServlet {
     new TestDAO().setStatus(testId, Test.NOT_GRADED);
   }
 
+  private void createAnswer(HttpServletRequest req, int testId) throws ServletException, IOException {
+    new ResourceController().uploadAnswerResource(req, testId);
+  }
+
+  private void gradeAnswer(HttpServletRequest req) throws ServletException, IOException{
+    int answerId = Integer.parseInt(req.getParameter("answerId"));
+    float mark = Float.parseFloat(req.getParameter("mark"));
+    new AnswerDAO().gradeAnswer(answerId, mark);
+  }
+  
   private void addCourse(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
     int subjectId = Integer.parseInt(req.getParameter("subjectId"));
     String subjectName = req.getParameter("subjectName");
@@ -178,6 +190,16 @@ public class CourseController extends HttpServlet {
       case "markTestAsNotGraded":
         markTestAsNotGraded(Integer.parseInt(req.getParameter("testId")));
         break;
+      case "createAnswer":
+        createAnswer(req, Integer.parseInt(req.getParameter("testId")));
+        break;
+      case "gradeAnswer":
+        gradeAnswer(req);
+        break;
+      case "deleteCourse":
+        new CourseDAO().deleteCourse(Integer.parseInt(req.getParameter("courseId")));
+        resp.sendRedirect("./");
+        return;
     }
     resp.sendRedirect("./course?" + req.getParameter("queryString"));
   }

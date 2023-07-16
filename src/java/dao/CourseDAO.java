@@ -1,5 +1,6 @@
 package dao;
 
+import controller.ResourceController;
 import database.DBContext;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -87,7 +88,7 @@ public class CourseDAO extends DBContext {
     }
     return courseIdList.contains(courseId);
   }
-  
+
   public void createCourse(String courseName, String description, int subjectId, int teacherId) {
     try {
       String strQuery = "INSERT INTO dbo.Course VALUES (?, ?, ?, ?)";
@@ -128,6 +129,64 @@ public class CourseDAO extends DBContext {
       stm.setString(1, newCourseDesc);
 
       stm.execute();
+    } catch (SQLException e) {
+      e.printStackTrace();
+    }
+  }
+
+//  DELETE CASCADEEEEE
+  public void deleteCourse(int courseId) {
+    try {
+      ArrayList<Integer> rIdList = new ArrayList<>();
+      ResultSet rs;
+      PreparedStatement stm;
+      String ar = "SELECT * FROM AnswerResource WHERE AnswerId IN ("
+              + "SELECT AnswerId FROM Answer WHERE TestId IN ("
+              + "SELECT TestId FROM Test WHERE CourseId = ?))";
+      stm = connection.prepareStatement(ar);
+      stm.setInt(1, courseId);
+      rs = stm.executeQuery();
+      while (rs.next()) {
+        rIdList.add(rs.getInt(2));
+      }
+      
+      String a = "DELETE FROM Answer WHERE TestId IN ("
+              + "SELECT TestId FROM Test WHERE CourseId = ?)";
+      stm = connection.prepareStatement(a);
+      stm.setInt(1, courseId);
+      stm.execute();
+
+      String tr = "SELECT * FROM TestResource WHERE TestId IN ("
+              + "SELECT TestId FROM Test WHERE CourseId = ?)";
+      stm = connection.prepareStatement(tr);
+      stm.setInt(1, courseId);
+      rs = stm.executeQuery();
+      while (rs.next()) {
+        rIdList.add(rs.getInt(2));
+      }
+
+      String t = "DELETE FROM Test WHERE CourseId = ?";
+      stm = connection.prepareStatement(t);
+      stm.setInt(1, courseId);
+      stm.execute();
+
+      String cr = "SELECT * FROM CourseResource WHERE CourseId = ?";
+      stm = connection.prepareStatement(cr);
+      stm.setInt(1, courseId);
+      rs = stm.executeQuery();
+      while (rs.next()) {
+        rIdList.add(rs.getInt(2));
+      }
+
+      String c = "DELETE FROM Course WHERE CourseID = ?";
+      stm = connection.prepareStatement(c);
+      stm.setInt(1, courseId);
+      stm.execute();
+      
+      for (int resourceId : rIdList) {
+        new ResourceController().deleteResource(resourceId);
+      }
+      
     } catch (SQLException e) {
       e.printStackTrace();
     }

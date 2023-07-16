@@ -100,9 +100,6 @@ public class Test {
 
     Duration duration = Duration.between(now, dueDateTime);
     String out = "";
-    if (isPassedDueDate()) {
-      out = "Passed ";
-    }
     
     boolean haveDays = false;
     if (duration.toDays() != 0) {

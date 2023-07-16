@@ -29,7 +29,7 @@ public class Resource {
   }
 
   public String getDownloadKey() throws Exception {
-    return new DownloadController().encrypt(path);
+    return new DownloadController().getFileName(path);
   }
 
   public String getExtension() {

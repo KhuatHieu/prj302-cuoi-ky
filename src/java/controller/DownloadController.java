@@ -2,7 +2,6 @@ package controller;
 
 import controller.auth.LoginController;
 import java.io.IOException;
-import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
@@ -13,11 +12,11 @@ import java.io.OutputStream;
 
 public class DownloadController extends HttpServlet {
 
-  public String encrypt(String key) {
+  public String getFileName(String key) {
     return key.substring(key.lastIndexOf("\\") + 1);
   }
 
-  public String decrypt(String encKey) {
+  public String getFilePath(String encKey) {
     return utilities.File.databasePath + "\\" + encKey;
   }
 
@@ -26,8 +25,8 @@ public class DownloadController extends HttpServlet {
     if (!LoginController.isLogin(req, resp)) {
       return;
     }
-    String downloadKey = this.decrypt(req.getParameter("downloadKey"));
-
+    String downloadKey = this.getFilePath(req.getParameter("downloadKey"));
+        
     File file = new File(downloadKey);
     FileInputStream inputStream = new FileInputStream(file);
 

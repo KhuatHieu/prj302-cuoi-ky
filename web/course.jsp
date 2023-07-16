@@ -108,7 +108,7 @@
         if (diffHours > 0) {
           estimatedTime += diffHours + ((diffHours === 1) ? ' hour ' : ' hours ')
         }
-        if (diffMinutes > 0) {
+        if (diffMinutes > 0 && diffMonths === 0) {
           estimatedTime += diffMinutes + ((diffMinutes === 1) ? ' minute ' : ' minutes ')
         }
 
@@ -272,13 +272,23 @@
                   <tbody>
                     <c:forEach items="${testList}" var="t">
                       <tr onclick='checkCourse(${t.getTestId()})' style='cursor: pointer;' class='${t.getTestId() == testId ? 'table-active' : ''}'>
-                        <th scope='row'><span class='ms-2'>${t.getClassName()}</span></th>
+                        <td scope='row'>
+                          <span class='ms-2'>${t.getClassName()}</span>
+                        </td>
                         <td>${t.getTestName()}</td>
                         <td>${t.getDate()}</td>
                         <td>
-                          <span style="color: ${t.isPassedDueDate() ? 'silver' : ''}">
-                            ${t.getRemainingTime()}
-                          </span>
+                          <c:choose>
+                            <c:when test="${t.isPassedDueDate() && t.getStatus() == Test.NOT_GRADED}">
+                              <span style='color: red;'>${t.getRemainingTime()}</span>
+                            </c:when>
+                            <c:when test="${t.isPassedDueDate() && t.getStatus() == Test.GRADED}">
+                              <span style='color: silver;'>${t.getRemainingTime()}</span>
+                            </c:when>
+                            <c:when test="${!t.isPassedDueDate()}">
+                              <span>${t.getRemainingTime()}</span>
+                            </c:when>
+                          </c:choose>
                         </td>                          
                         <td class='align-middle'>
                           <span class='badge ${t.getBadgeBg()}' style='vertical-align: middle;'>${t.getStatus()}</span>
@@ -616,16 +626,62 @@
               </div>
             </div>
 
-            <!-- Test details -->
+            <!-- Answers details -->
             <c:if test="${not empty test}">
-              <div class="rounded border mt-3 mb-3">
-                <h4 class='ms-3 mt-2'>Student answers</h4>
-                <button class='btn btn-sm btn-outline-success mb-3 mt-1 ms-3' style='width: 5rem;'
+              <div class="rounded border mt-3 mb-3 ps-3">
+                <h4 class='mt-2'>Student answers - For testing purposes</h4>
+                <c:if test='${not empty answerList}'>
+                  <table id='answerListTable' class='table table-hover' style='margin-left: -1rem;'>
+                    <thead>
+                      <tr>
+                        <th scope='col' class='th-sm'>
+                          <span class='ms-2'>Name</span>
+                        </th>
+                        <th scope='col'>Attachment</th>
+                        <th scope='col'>Mark</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <c:forEach items="${answerList}" var="a">
+                        <tr>
+                          <td scope='row'>
+                            <span class='ms-2 align-middle'>${a.getStudentName()}</span>
+                          </td>
+                          <td style='vertical-align: middle;'>
+                            <a href='./download?downloadKey=${a.getDownloadKey()}'>
+                              ${a.getResourceName()}
+                            </a>
+                          </td>
+                          <td>
+                            <form action="course" method="post">
+                              <input type="hidden" name="action" value='gradeAnswer'>
+                              <input type="hidden" name="answerId" value='${a.getAnswerId()}'>
+                              <input type="hidden" name="queryString" value="${pageContext.request.queryString}" />
+                              <div class="input-group">
+                                <input type="number" step='0.01' name='mark' class="form-control w-25" value="${(a.getMark() == -1.0) ? '' : a.getMark()}" placeholder="Not graded">
+                                <button class="btn btn-outline-success material-icons" type="submit">${(a.getMark() == -1.0) ? 'done' : 'edit'}</button>
+                              </div>
+                            </form>
+                          </td>
+                        </tr>
+                      </c:forEach>
+                    </tbody>
+                  </table>
+                </c:if>
+                <c:if test="${empty answerList}">
+                  <h1 class='fs-5' style='color: silver; user-select: none;'>
+                    No answers submitted
+                  </h1>
+                </c:if>
+                <button class='btn btn-sm btn-outline-success mb-3 mt-1' style='width: 5rem;'
                         data-bs-toggle="modal" data-bs-target="#createAnswer">
                   <span class='material-icons align-middle'>
                     add
                   </span>
                 </button>
+                <script>
+                  new DataTable('#answerListTable');
+                </script>
               </div>
 
               <div class="modal fade" id='createAnswer' data-bs-backdrop='static'>
@@ -641,14 +697,14 @@
                       <input type="hidden" name="testId" id="" value='${testId}'>
                       <div class='modal-body'>
                         <label for="formStudent" class="form-label">Choose a student</label>
-                        <select name="" id="formStudent" class="form-control border selectpicker" data-live-search="true">
+                        <select name="studentId" id="formStudent" class="form-control border selectpicker" data-live-search="true">
                           <c:forEach items="${studentList}" var="s">
                             <option value="${s.getId()}">${s.getId()} - ${s.getName()}</option>
                           </c:forEach>
                         </select>
                         <br>
-                        <label for="formFiles" class="form-label">You can choose multiple files</label>
-                        <input class="form-control" type="file" id="formFiles" name='file' multiple>
+                        <label for="formFiles" class="form-label">Choose 1 file to submit</label>
+                        <input class="form-control" type="file" id="formFiles" name='file'>
                         <div class="form-text">
                           Maximum file size: 50MB
                         </div>
@@ -810,9 +866,13 @@
                 </div>
               </div>
               <hr>
-              <div class="ms-3 mb-3">
-                <a href='./course?action=delete&courseId=<%=courseId%>' class='btn btn-outline-danger'>Delete course</a>
-              </div>
+              <!-- <div class="ms-3 mb-3">
+                <form action="course" method="post">
+                  <input type="hidden" name="action" value='deleteCourse'>
+                  <input type="hidden" name="courseId" value='<%=courseId%>'>
+                  <button class='btn btn-outline-danger'>Delete course</button>
+                </form>
+              </div> -->
             </div>
           </div>
         </div>
